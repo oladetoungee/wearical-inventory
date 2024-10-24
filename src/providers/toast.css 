@@ -1,0 +1,18 @@
+/* toast.css */
+
+/* Center the ToastContainer */
+.custom-toast-container {
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust to be fully centered */
+}
+
+/* Custom styling for each toast */
+.custom-toast {
+  background-color: #1a1a1a !important; /* Dark background */
+  color: #ffffff !important; /* White text */
+  font-size: 1.2rem !important; /* Increase font size */
+  padding: 20px !important; /* Add padding */
+  border-radius: 10px !important; /* Round the corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important; /* Add shadow for depth */
+}
