@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,12 +12,12 @@ interface ResetPasswordFormValues {
   password: string;
 }
 
-const ResetPasswordConfirm = () => {
+const ResetPasswordConfirmContent = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { register, handleSubmit, formState: { errors } } = useForm<ResetPasswordFormValues>();
-  const oobCode = searchParams.get("oobCode"); // Get the code from the URL
+  const oobCode = searchParams.get("oobCode");
 
   const onSubmit: SubmitHandler<ResetPasswordFormValues> = async (data) => {
     if (!oobCode) {
@@ -29,7 +29,7 @@ const ResetPasswordConfirm = () => {
     try {
       await confirmPasswordReset(auth, oobCode, data.password);
       toast.success("Password has been reset successfully!");
-      router.push('/sign-in'); // Redirect to sign-in page
+      router.push('/sign-in');
     } catch (error) {
       toast.error("Failed to reset password. Please try again.");
     } finally {
@@ -59,5 +59,11 @@ const ResetPasswordConfirm = () => {
     </>
   );
 };
+
+const ResetPasswordConfirm = () => (
+  <Suspense fallback={<p>Loading...</p>}>
+    <ResetPasswordConfirmContent />
+  </Suspense>
+);
 
 export default ResetPasswordConfirm;
