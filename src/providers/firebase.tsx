@@ -1,12 +1,14 @@
-"use client"; 
 
-import { FirebaseAppProvider } from 'reactfire';
-import { firebaseConfig } from '@/lib/utils';
 
-export default function FirebaseProvider({ children }: { children: React.ReactNode }) {
-  return (
-    <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-      {children}
-    </FirebaseAppProvider>
-  );
+"use client";
+import React, { ReactNode, createContext, useContext } from 'react';
+import { app } from '@/lib/utils/firebase';
+
+const FirebaseContext = createContext(app);
+
+export default function FirebaseProvider({ children }: { children: ReactNode }) {
+  return <FirebaseContext.Provider value={app}>{children}</FirebaseContext.Provider>;
 }
+
+export const useFirebaseApp = () => useContext(FirebaseContext);
+
