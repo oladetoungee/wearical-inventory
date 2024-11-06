@@ -1,7 +1,11 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link'; 
 import { LogOut, LayoutPanelLeft, CalendarCheck2, ChartBar, Users, ClipboardList, Settings as SettingsIcon, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui'; 
+import { logOut } from '@/lib/services/auth';
+import { useRouter } from 'next/router';
 
 interface NavItem {
     name: string;
@@ -25,7 +29,14 @@ const navItems: NavItem[] = [
     { name: 'Settings', path: '/settings', icon: <SettingsIcon className="w-5 h-5" /> },
 ];
 
+
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage }) => {
+    // const router = useRouter();
+
+    // const signOut = () => {
+    //     logOut();
+    //     router.push('/sign-in');
+    // }
     return (
         <div className={`fixed border-r inset-0 z-30 transform transition-transform duration-300 bg-white ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static md:w-64`}>
             <div className="flex justify-end p-4 md:hidden">
@@ -61,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage
                     <p className="ml-2 text-xs md:text-sm">John Doe</p>
                 </div>
                 <button className="flex items-center text-xs md:text-base" onClick={toggleSidebar}>
-                    <LogOut className="mr-1" /> 
+                    <LogOut className="mr-1" onClick={logOut}/> 
                 </button>
             </div>
         </div>

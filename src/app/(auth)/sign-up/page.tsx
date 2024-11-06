@@ -7,6 +7,7 @@ import { Button, Input } from '@/components/ui';
 import Link from 'next/link';
 import { signUp } from '@/lib/services/auth';
 
+
 interface SignUpFormValues {
   fullName: string;
   email: string;
