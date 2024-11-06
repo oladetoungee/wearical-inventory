@@ -36,17 +36,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage
            
             <h1 className="text-2xl font-bold text-primary100 leading-4 tracking-wide px-6 md:text-4xl md:pt-8 md:px-8">Wearical</h1>
             <nav className="flex-1 mt-6">
-                {navItems.map(item => (
-                    <Link
-                        key={item.name}
-                        href={item.path}
-                        className={`flex items-center mx-4 my-2 px-3 py-2 rounded transition-colors duration-200 text-xs hover:bg-primary100 hover:text-white md:mx-8 md:px-4 md:py-3 md:text-sm ${item.path === window.location.pathname ? 'bg-primary100 text-white' : 'hover:bg-gray-600'}`}
-                        onClick={() => setCurrentPage(item.name)} // Update current page
-                    >
-                        {item.icon}
-                        <span className="ml-2">{item.name}</span>
-                    </Link>
-                ))}
+            {navItems.map(item => (
+    <Link
+        key={item.name}
+        href={item.path}
+        className={`flex items-center mx-4 my-2 px-3 py-2 rounded transition-colors duration-200 text-xs hover:bg-primary100 hover:text-white md:mx-8 md:px-4 md:py-3 md:text-sm ${
+            typeof window !== "undefined" && item.path === window.location.pathname ? 'bg-primary100 text-white' : 'hover:bg-gray-600'
+        }`}
+        onClick={() => setCurrentPage(item.name)} // Update current page
+    >
+        {item.icon}
+        <span className="ml-2">{item.name}</span>
+    </Link>
+))}
+
             </nav>
        
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 md:py-4">
