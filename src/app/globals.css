@@ -2,9 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+
+
+/* body {
   font-family: Arial, Helvetica, sans-serif;
+} */
+
+body {
+  font-family: 'Sora', sans-serif;
 }
+
 
 @layer base {
   :root {
@@ -14,7 +22,7 @@ body {
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
+    --primary: 30 36.8% 15.3%;
     --primary-foreground: 0 0% 98%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;

@@ -2,7 +2,7 @@
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './toast.css'; // Add your custom styles here
+
 
 export default function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -14,8 +14,7 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
         newestOnTop={true}         
         closeOnClick={true}       
         pauseOnHover={true}       
-        draggable={true}           
-        className="custom-toast-container" 
+        draggable={true}            
         toastClassName="custom-toast"     
       />
       {children}
