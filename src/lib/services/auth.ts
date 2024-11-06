@@ -1,8 +1,7 @@
 import { auth } from '../utils/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { setCookie, destroyCookie } from 'nookies'; // Import cookie functions
-
-
+import { redirect } from 'next/navigation'
 
 // Function to sign up a user
 export const signUp = async (email: string, password: string) => {
@@ -15,7 +14,7 @@ export const signUp = async (email: string, password: string) => {
     maxAge: 30 * 24 * 60 * 60, // 30 days
     path: '/',
   });
-
+  redirect('/')
   return user; // Return user information if needed
 };
 
@@ -30,7 +29,7 @@ export const signIn = async (email: string, password: string) => {
     maxAge: 30 * 24 * 60 * 60, // 30 days
     path: '/',
   });
-
+redirect('/')
   return user; // Return user information if needed
 };
 
@@ -38,6 +37,6 @@ export const signIn = async (email: string, password: string) => {
 export const logOut = async () => {
   await signOut(auth); // Sign out from Firebase
   //REDIRECT TO SIGN IN
-
+  redirect('/sign-in')
   destroyCookie(null, 'token'); // Remove the token cookie
 };
