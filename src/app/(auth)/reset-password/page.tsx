@@ -38,7 +38,7 @@ const ResetPassword = () => {
           {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
         </div>
         
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" >
           Send Reset Link
         </Button>
       </form>

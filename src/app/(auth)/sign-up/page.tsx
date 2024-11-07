@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Button, Input } from '@/components/ui';
 import Link from 'next/link';
 import { signUp } from '@/lib/services/auth';
+import { useRouter } from 'next/navigation';
 
 
 interface SignUpFormValues {
@@ -15,12 +16,15 @@ interface SignUpFormValues {
 }
 
 const SignUp = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormValues>();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<SignUpFormValues>();
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     try {
       await signUp(data.email, data.password);
       toast.success('Account created successfully!');
+      reset();
+      router.push('/');
     } catch (error) {
       toast.error('Failed to create an account. Please try again.');
     }

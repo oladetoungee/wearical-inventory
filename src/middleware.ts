@@ -13,7 +13,7 @@ export async function middleware(req: NextRequest) {
 
   // Get the token from cookies
   const userAuthToken = req.cookies.get('token')?.value;
-console.log('token', userAuthToken)
+
 
 
   try {
@@ -22,7 +22,6 @@ console.log('token', userAuthToken)
     return NextResponse.redirect(new URL('/sign-in', req.url));
   }
 
-  console.log('token')
   } catch (error) {
     console.error("Middleware token verification error:", error);
     return NextResponse.redirect(new URL('/sign-in', req.url));

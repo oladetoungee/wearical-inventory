@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Button, Input } from '@/components/ui';
 import { confirmPasswordReset } from 'firebase/auth';
 import { auth } from '@/lib/utils/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -43,7 +44,7 @@ const ResetPasswordConfirmContent = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <p className='text-black100 text-sm my-2'>New Password</p>
-          <input
+          <Input
             type="password"
             placeholder="Enter your new password"
             {...register("password", { required: "Password is required" })}
@@ -51,9 +52,9 @@ const ResetPasswordConfirmContent = () => {
           />
           {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </div>
-        <button type="submit" className="w-full btn-primary" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Reset Password"}
-        </button>
+        <Button type="submit" className="w-full btn-primary" disabled={isSubmitting}>
+       
+        </Button>
       </form>
       <ToastContainer />
     </>

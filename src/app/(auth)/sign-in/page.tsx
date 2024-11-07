@@ -15,11 +15,12 @@ interface SignInFormValues {
 
 const SignIn = () => {
   const router = useRouter(); 
-  const { register, handleSubmit, formState: { errors } } = useForm<SignInFormValues>();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<SignInFormValues>();
 
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     try {
       await signIn(data.email, data.password);
+      reset();
       router.push('/');
     } catch (error) {
       toast.error('Sign in failed. Please check your credentials.');
@@ -52,7 +53,8 @@ const SignIn = () => {
           />
           {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </div> 
-         <p className='text-green100 FONT-MEDIUM text-sm my-2'>Forget Password</p>
+        <Link className='hover:underline text-green100 text-sm my-2' href={'/reset-password'}>Forget Password</Link>
+  
 
         {/* Submit Button */}
         <Button type="submit" className="w-full">

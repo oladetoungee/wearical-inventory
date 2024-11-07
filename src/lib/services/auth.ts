@@ -14,7 +14,7 @@ export const signUp = async (email: string, password: string) => {
     maxAge: 30 * 24 * 60 * 60, // 30 days
     path: '/',
   });
-  redirect('/')
+ 
   return user; // Return user information if needed
 };
 
@@ -29,14 +29,11 @@ export const signIn = async (email: string, password: string) => {
     maxAge: 30 * 24 * 60 * 60, // 30 days
     path: '/',
   });
-redirect('/')
   return user; // Return user information if needed
 };
 
 // Function to log out a user
 export const logOut = async () => {
   await signOut(auth); // Sign out from Firebase
-  //REDIRECT TO SIGN IN
-  redirect('/sign-in')
   destroyCookie(null, 'token'); // Remove the token cookie
 };
