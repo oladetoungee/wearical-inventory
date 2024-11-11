@@ -16,7 +16,7 @@ interface NavItem {
 interface SidebarProps {
     isOpen: boolean;
     toggleSidebar: () => void;
-    setCurrentPage: (page: string) => void; // New prop to set current page
+    setCurrentPage: (page: string) => void; 
 }
 
 const navItems: NavItem[] = [
@@ -65,11 +65,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage
        
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 md:py-4">
                 <div className="flex items-center">
-                    <Avatar className="w-8 h-8 md:w-10 md:h-10"> 
+                    <Avatar> 
                         <AvatarImage src="https://github.com/shadcn.png" />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    <p className="ml-2 text-xs md:text-sm">John Doe</p>
+                    <p className="ml-2 text-xs ">John Doe</p>
                 </div>
                 <button className="flex items-center text-xs md:text-base" onClick={toggleSidebar}>
                     <LogOut className="mr-1" onClick={logOut}/> 
