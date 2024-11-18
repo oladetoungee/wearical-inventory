@@ -25,8 +25,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize services (lazy-loaded as needed)
 const auth = getAuth(app);
-const db = getFirestore(app);
-const database: Database = getDatabase(app);
+const db = getDatabase(app);
 const storage = getStorage(app);
 const functions: Functions = getFunctions(app);
 
@@ -41,4 +40,4 @@ isAnalyticsSupported().then((supported) => {
 });
 
 // Export the initialized services for use across the app
-export { app, auth, db, database, storage, functions, analytics };
+export { app, auth, db, storage, functions, analytics };

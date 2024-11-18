@@ -22,7 +22,7 @@ const SignUp = () => {
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     try {
-      await signUp(data.email, data.password);
+      await signUp(data.email, data.password, data.fullName);
       toast.success('Account created successfully!');
       reset();
       router.push('/');

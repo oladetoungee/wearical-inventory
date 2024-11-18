@@ -2,3 +2,8 @@ export * from './button';
 export * from './input';
 export * from './avatar';
 export * from './breadcrumb';
+export * from './card';
+export * from './chart';
+export * from './line-chart';
+export * from './bar-chart';
+export * from './table';
