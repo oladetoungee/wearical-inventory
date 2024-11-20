@@ -24,5 +24,16 @@ export const products: Product[] = [
     status: "Out of Stock",
     image: "/images/product2.jpg",
   },
+  {
+    id: 3,
+    name: "Product 3",
+    description: "This is a brief description of Product 3.",
+    category: "Clothing",
+    quantity: 15,
+    dateCreated: "2024-03-20",
+    location: "Warehouse C",
+    status: "In Stock",
+    image: "/images/product3.jpg",
+  }
   // Add more products as needed
 ];

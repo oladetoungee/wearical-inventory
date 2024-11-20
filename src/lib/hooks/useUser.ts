@@ -1,14 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, off } from 'firebase/database';
 import { auth, db } from '../utils/firebase';
+import {  UserData } from '../utils/definition';
 
-interface UserData {
-  uid: string;
-  email: string;
-  name?: string;
-  // Add any additional fields here
-}
 
 export function useUser() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -16,47 +11,54 @@ export function useUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-
+    const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
 
       if (currentUser) {
-        fetchUserData(currentUser.uid);
+        await fetchUserData(currentUser.uid);
       } else {
-        setUserData(null);
+        clearUserData();
       }
+
+      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
 
-  const fetchUserData = (uid: string) => {
+  const fetchUserData = useCallback(async (uid: string) => {
     setLoading(true);
+
     const userRef = ref(db, `users/${uid}`);
-    console.log('Fetching data for user:', uid);
-
-    onValue(
-      userRef,
-      (snapshot) => {
-        if (snapshot.exists()) {
-          console.log('Snapshot data:', snapshot.val());
-          setUserData({ uid, ...snapshot.val() } as UserData);
-        } else {
-          console.error('No such user data found in Realtime Database');
-          setUserData(null);
-        }
-        setLoading(false);
-      },
-      (error) => {
-        console.error('Failed to fetch user data:', error);
+    const handleSnapshot = (snapshot: any) => {
+      if (snapshot.exists()) {
+        setUserData({ uid, ...snapshot.val() } as UserData);
+      } else {
+        console.warn(`No user data found for uid: ${uid}`);
         setUserData(null);
-        setLoading(false);
       }
-    );
-  };
+      setLoading(false);
+    };
 
+    const handleError = (error: Error) => {
+      console.error(`Error fetching user data: ${error.message}`);
+      setUserData(null);
+      setLoading(false);
+    };
 
+    try {
+      onValue(userRef, handleSnapshot, handleError);
+
+      return () => off(userRef); 
+    } catch (error) {
+      console.error(`Unexpected error fetching user data: ${error}`);
+      setLoading(false);
+    }
+  }, []);
+
+  const clearUserData = useCallback(() => {
+    setUserData(null);
+  }, []);
 
   return { user, userData, loading };
 }
