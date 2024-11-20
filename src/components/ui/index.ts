@@ -7,3 +7,5 @@ export * from './chart';
 export * from './line-chart';
 export * from './bar-chart';
 export * from './table';
+export * from './spinner'
+export * from './dropdown-menu'

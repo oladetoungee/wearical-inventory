@@ -4,7 +4,8 @@ export interface UserData {
     uid: string;
     email: string;
     username?: string;
-    [key: string]: any; // Add more fields as needed
+    role: 'Admin' | 'Sales' | 'Manager';
+    [key: string]: any; 
   }
 
   export interface UserContextType {

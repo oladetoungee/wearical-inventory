@@ -5,10 +5,7 @@ import Link from 'next/link';
 import { LogOut, LayoutPanelLeft, CalendarCheck2, ChartBar, Users, ClipboardList, Settings as SettingsIcon, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { logOut } from '@/lib/services/auth';
-import { useUser } from '@/lib/hooks/useUser';
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { ref, onValue } from 'firebase/database';
-import { auth, db } from '@/lib/utils/firebase';
+import { useUser } from '@/lib/hooks';
 
 interface NavItem {
     name: string;
@@ -32,6 +29,7 @@ const navItems: NavItem[] = [
     { name: 'Settings', path: '/settings', icon: <SettingsIcon className="w-5 h-5" /> },
 ];
 
+
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage }) => {
     const { userData } = useUser();
 
@@ -39,7 +37,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage
 
     const [currentPath, setCurrentPath] = useState<string | null>(null);
 
-    // Use `useEffect` to get the pathname on the client side only
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setCurrentPath(window.location.pathname);
@@ -73,11 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage
 
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 md:py-4">
                 <div className="flex items-center">
-                    <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>CN</AvatarFallback>
+                <Avatar>
+                        <AvatarImage src={userData?.photoURL} />
+                        <AvatarFallback>{userData?.fullName?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
-                    <p className="ml-2 text-xs">{userData?.name || "John Doe"}</p>
+                    <p className="text-sm font-semibold">{userData?.fullName || 'Unknown User'}</p>
                 </div>
                 <button className="flex items-center text-xs md:text-base" onClick={logOut}>
                     <LogOut className="mr-1" />
