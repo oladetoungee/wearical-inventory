@@ -125,7 +125,7 @@ const columns: ColumnDef<typeof products[number]>[] = [
   },
 ];
 
-const ProductTable = () => {
+export const ProductTable = () => {
   const table = useReactTable({
     data: products,
     columns,
@@ -178,4 +178,4 @@ const ProductTable = () => {
   );
 };
 
-export default ProductTable;
+
