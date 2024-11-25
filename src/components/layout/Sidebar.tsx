@@ -74,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage
                         <AvatarImage src={userData?.photoURL} />
                         <AvatarFallback>{userData?.fullName?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
-                    <p className="text-sm font-semibold">{userData?.fullName || 'Unknown User'}</p>
+                    <p className="text-sm font-semibold">{userData?.fullName}</p>
                 </div>
                 <button className="flex items-center text-xs md:text-base" onClick={logOut}>
                     <LogOut className="mr-1" />

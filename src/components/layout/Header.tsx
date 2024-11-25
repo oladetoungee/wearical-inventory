@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, currentPage }) => {
                      <Spinner/>
                     ) : userData ? (
                         <>
-                            <p className="text-sm font-semibold">{userData.fullName || 'Unknown User'}</p>
+                            <p className="text-sm font-semibold">{userData.fullName}</p>
                             <p className="text-xs text-gray-500">{userData.email}</p>
                         </>
                     ) : null}
