@@ -1,5 +1,6 @@
 import { DashboardLayout } from '../components/layout';
-import { DashboardHome, DashboardCharts } from '@/components/dashboard';
+import  { DashboardCharts}   from '@/components/dashboard/dashboard-charts';
+import  { DashboardHome}   from '@/components/dashboard/dashboard-ctas';
 import { ProductTable }  from '@/components/product'
 
 
