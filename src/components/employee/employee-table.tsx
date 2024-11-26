@@ -34,8 +34,12 @@ import {
   ChevronsRight,
   ListFilterIcon,
 } from "lucide-react";
+import { AddEmployeeModal } from "./add-modal";
+
+
 
 export const EmployeeTable = () => {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all"); // Role filter state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,7 +159,10 @@ export const EmployeeTable = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button onClick={toggleModal} className="bg-primary text-white">
+          <Button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-primary text-white"
+          >
             Add Employee
           </Button>
         </div>
@@ -217,7 +224,12 @@ export const EmployeeTable = () => {
       </div>
 
       {/* Add Employee Modal */}
-      {isModalOpen && <div>Add Employee Modal Here</div>}
+       {/* Add Employee Modal */}
+       <AddEmployeeModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+      />
+ 
     </div>
   );
 };
