@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   useReactTable,
   ColumnDef,
@@ -16,86 +16,38 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Input,
-  Button,
-
-} from "@/components/ui";
+import { Input, Button } from "@/components/ui";
 import { employees } from "@/data/employee";
-import { MoreVertical, EyeIcon, UserPenIcon, DeleteIcon } from "lucide-react";
-
-const columns: ColumnDef<typeof employees[number]>[] = [
-  {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <span>{row.original.id}</span>,
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => (
-      <div className="flex items-center space-x-4">
-        <span className="font-medium">{row.original.name}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-  },
-  {
-    accessorKey: "dateAdded",
-    header: "Date Added",
-  },
-  {
-    accessorKey: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex items-center justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <MoreVertical className="cursor-pointer" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>
-              <EyeIcon className="mr-2" /> View
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <UserPenIcon className="mr-2" /> Update
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <DeleteIcon className="mr-2" /> Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
-  },
-];
 
 export const EmployeeTable = () => {
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredEmployees = employees.filter((employee) =>
-    employee.name.toLowerCase().includes(search.toLowerCase())
+  const filteredEmployees = useMemo(() => {
+    return employees.filter((employee) =>
+      employee.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search]);
+
+  const columns = useMemo<ColumnDef<typeof employees[number]>[]>(
+    () => [
+      { accessorKey: "id", header: "ID" },
+      { accessorKey: "name", header: "Name" },
+      { accessorKey: "phone", header: "Phone" },
+      { accessorKey: "email", header: "Email" },
+      { accessorKey: "role", header: "Role" },
+      { accessorKey: "dateAdded", header: "Date Added" },
+      {
+        accessorKey: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <div>
+            <Button onClick={() => console.log("View", row.original)}>View</Button>
+          </div>
+        ),
+      },
+    ],
+    []
   );
 
   const table = useReactTable({
@@ -109,37 +61,19 @@ export const EmployeeTable = () => {
 
   return (
     <div className="space-y-4">
-      {/* Search and Filters */}
-      <div className="flex items-center justify-between">
-      
-          <Input
-            placeholder="Search employees..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-64"
-          />
-            <div className="flex space-x-2">
-          <Button variant={'secondary'}>Filter by Account</Button>
-      
-        <Button onClick={toggleModal} className="bg-primary text-white">
-          Add Employee
-        </Button>
-        </div>
-      </div>
-
-      {/* Employee Table */}
+      <Input
+        placeholder="Search employees..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-64"
+      />
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                  {flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>
@@ -165,21 +99,12 @@ export const EmployeeTable = () => {
           )}
         </TableBody>
       </Table>
-
-      {/* Pagination */}
-      <div className="flex justify-end space-x-2">
-        <Button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-          Previous
-        </Button>
-        <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-          Next
-        </Button>
-      </div>
-
-      {/* Add Employee Modal */}
-      {isModalOpen && (
-     <h2>sdhjewuew</h2>
-      )}
+      <Button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+        Previous
+      </Button>
+      <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+        Next
+      </Button>
     </div>
   );
 };

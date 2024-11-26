@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { LogOut, LayoutPanelLeft, CalendarCheck2, ChartBar, Users, ClipboardList, Settings as SettingsIcon, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { logOut } from '@/lib/services/auth';
@@ -29,19 +30,9 @@ const navItems: NavItem[] = [
     { name: 'Settings', path: '/settings', icon: <SettingsIcon className="w-5 h-5" /> },
 ];
 
-
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage }) => {
+const Sidebar = ({ isOpen, toggleSidebar, setCurrentPage }: SidebarProps) => {
     const { userData } = useUser();
-
-
-
-    const [currentPath, setCurrentPath] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setCurrentPath(window.location.pathname);
-        }
-    }, []);
+    const currentPath = usePathname(); 
 
     return (
         <div className={`fixed border-r inset-0 z-30 transform transition-transform duration-300 bg-white ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static md:w-64`}>
@@ -70,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, setCurrentPage
 
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 md:py-4">
                 <div className="flex items-center">
-                <Avatar>
+                    <Avatar>
                         <AvatarImage src={userData?.photoURL} />
                         <AvatarFallback>{userData?.fullName?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
