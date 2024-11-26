@@ -1,5 +1,4 @@
 import { DashboardLayout } from '@/components/layout';
-import { DashboardHome, DashboardCharts } from '@/components/dashboard';
  import {EmployeeTable} from '@/components/employee';
 
 
