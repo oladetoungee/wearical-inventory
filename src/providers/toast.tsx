@@ -1,7 +1,7 @@
 "use client";
 
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 
 export default function ToastProvider({ children }: { children: React.ReactNode }) {
@@ -14,8 +14,7 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
         newestOnTop={true}         
         closeOnClick={true}       
         pauseOnHover={true}       
-        draggable={true}            
-        toastClassName="custom-toast"     
+        draggable={true}               
       />
       {children}
     </>

@@ -20,23 +20,44 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input, Button } from "@/components/ui";
 import { employees } from "@/data/employee";
-import { MoreVertical, EyeIcon, UserPenIcon, DeleteIcon } from "lucide-react";
+import { EmptyState } from "../layout";
+import {
+  MoreVertical,
+  EyeIcon,
+  UserPenIcon,
+  DeleteIcon,
+  ChevronsLeft,
+  ChevronsRight,
+  ListFilterIcon,
+} from "lucide-react";
 
 export const EmployeeTable = () => {
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all"); // Role filter state
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Define colors for roles
+  const roleColors = {
+    Admin: "bg-red-100 text-red-700",
+    "Sub Admin": "bg-blue-100 text-blue-700",
+    "Sales Personnel": "bg-green-100 text-green-700",
+    "Store Manager": "bg-yellow-100 text-yellow-700",
+  };
 
   // Memoize filtered data
   const filteredEmployees = useMemo(() => {
-    return employees.filter((employee) =>
-      employee.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search]);
+    return employees.filter((employee) => {
+      const matchesSearch = employee.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchesRole = roleFilter === "all" || employee.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
+  }, [search, roleFilter]);
 
   // Memoize columns to prevent unnecessary re-renders
   const columns = useMemo<ColumnDef<typeof employees[number]>[]>(
@@ -45,7 +66,21 @@ export const EmployeeTable = () => {
       { accessorKey: "name", header: "Name" },
       { accessorKey: "phone", header: "Phone" },
       { accessorKey: "email", header: "Email" },
-      { accessorKey: "role", header: "Role" },
+      {
+        accessorKey: "role",
+        header: "Role",
+        cell: ({ row }) => {
+          const role = row.original.role as keyof typeof roleColors;
+          const roleClass = roleColors[role] || "bg-gray-100 text-gray-700";
+          return (
+            <span
+              className={`px-2 py-1 rounded-md text-sm font-medium ${roleClass}`}
+            >
+              {row.original.role}
+            </span>
+          );
+        },
+      },
       { accessorKey: "dateAdded", header: "Date Added" },
       {
         accessorKey: "actions",
@@ -60,11 +95,9 @@ export const EmployeeTable = () => {
                 <DropdownMenuItem>
                   <EyeIcon className="mr-2" /> View
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <UserPenIcon className="mr-2" /> Update
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <DeleteIcon className="mr-2" /> Delete
                 </DropdownMenuItem>
@@ -74,7 +107,7 @@ export const EmployeeTable = () => {
         ),
       },
     ],
-    []
+    [roleColors]
   );
 
   const table = useReactTable({
@@ -97,7 +130,31 @@ export const EmployeeTable = () => {
           className="w-64"
         />
         <div className="flex space-x-2">
-          <Button variant="secondary">Filter by Account</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center px-2 py-1">
+              <ListFilterIcon className="mr-2 h-4 w-4" />
+              <span>Account</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setRoleFilter("all")}>
+                All Roles
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRoleFilter("Admin")}>
+                Admin
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRoleFilter("Sub Admin")}>
+                Sub Admin
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setRoleFilter("Sales Personnel")}
+              >
+                Sales Personnel
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRoleFilter("Store Manager")}>
+                Store Manager
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button onClick={toggleModal} className="bg-primary text-white">
             Add Employee
           </Button>
@@ -136,7 +193,7 @@ export const EmployeeTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-                No employees found.
+                <EmptyState type="employee" />
               </TableCell>
             </TableRow>
           )}
@@ -149,13 +206,13 @@ export const EmployeeTable = () => {
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          <ChevronsLeft />
         </Button>
         <Button
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          <ChevronsRight />
         </Button>
       </div>
 

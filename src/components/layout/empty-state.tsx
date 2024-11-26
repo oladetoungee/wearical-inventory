@@ -21,7 +21,7 @@ export const EmptyState = ({ type }: EmptyStateProps) => {
                 height={128}
                 className="mb-4"
             />
-            <p className="text-lg text-gray-500">{messages[type]}</p>
+            <p className="text-sm text-gray-500">{messages[type]}</p>
         </div>
     );
 };

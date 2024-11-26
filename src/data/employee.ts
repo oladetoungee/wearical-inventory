@@ -4,7 +4,7 @@ export const employees = [
       name: "John Doe",
       phone: "123-456-7890",
       email: "johndoe@example.com",
-      role: "Manager",
+      role: "Admin",
       dateAdded: "2024-11-20",
     },
     {
@@ -12,7 +12,7 @@ export const employees = [
       name: "Jane Smith",
       phone: "987-654-3210",
       email: "janesmith@example.com",
-      role: "Developer",
+      role: "Store Manager",
       dateAdded: "2024-11-19",
     },
   ];
