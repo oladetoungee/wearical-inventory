@@ -20,20 +20,16 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Input,
   Button,
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
+
 } from "@/components/ui";
 import { employees } from "@/data/employee";
-import { EmptyState } from "@/components/layout";
-import { MoreVertical, Edit3Icon, Trash2Icon, ChevronLeft, ChevronRight, SearchIcon, ListFilterIcon } from "lucide-react";
+import { MoreVertical, EyeIcon, UserPenIcon, DeleteIcon } from "lucide-react";
 
 const columns: ColumnDef<typeof employees[number]>[] = [
   {
@@ -77,10 +73,15 @@ const columns: ColumnDef<typeof employees[number]>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>
-              <Edit3Icon className="mr-2" /> Edit
+              <EyeIcon className="mr-2" /> View
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Trash2Icon className="mr-2" /> Delete
+              <UserPenIcon className="mr-2" /> Update
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <DeleteIcon className="mr-2" /> Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -91,15 +92,11 @@ const columns: ColumnDef<typeof employees[number]>[] = [
 
 export const EmployeeTable = () => {
   const [search, setSearch] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredEmployees = employees.filter((employee) => {
-    const matchesSearch = employee.name.toLowerCase().includes(search.toLowerCase()) ||
-      employee.email.toLowerCase().includes(search.toLowerCase());
-    const matchesRole = selectedRole ? employee.role === selectedRole : true;
-    return matchesSearch && matchesRole;
-  });
+  const filteredEmployees = employees.filter((employee) =>
+    employee.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   const table = useReactTable({
     data: filteredEmployees,
@@ -113,33 +110,20 @@ export const EmployeeTable = () => {
   return (
     <div className="space-y-4">
       {/* Search and Filters */}
-      <div className="flex items-center justify-between mt-2">
-        <div className="relative">
+      <div className="flex items-center justify-between">
+      
           <Input
-            placeholder="Search by name, email..."
+            placeholder="Search employees..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-64 pl-10"
+            className="w-64"
           />
-          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        </div>
-        <div className="flex space-x-2">
-          <Select onValueChange={setSelectedRole}>
-            <SelectTrigger className="text-xs w-48">
-              <ListFilterIcon className="mr-2" />
-              <SelectValue placeholder="Filter by Account Role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="Admin">Admin</SelectItem>
-              <SelectItem value="Sub-admin">Sub-admin</SelectItem>
-              <SelectItem value="Sales-person">Sales-person</SelectItem>
-              <SelectItem value="Manager">Manager</SelectItem>
-            </SelectContent>       
-          </Select>
-          <Button onClick={toggleModal} className="bg-primary text-white">
-            + Add Employee
-          </Button>
+            <div className="flex space-x-2">
+          <Button variant={'secondary'}>Filter by Account</Button>
+      
+        <Button onClick={toggleModal} className="bg-primary text-white">
+          Add Employee
+        </Button>
         </div>
       </div>
 
@@ -175,7 +159,7 @@ export const EmployeeTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-                <EmptyState type="employee" />
+                No employees found.
               </TableCell>
             </TableRow>
           )}
@@ -183,23 +167,19 @@ export const EmployeeTable = () => {
       </Table>
 
       {/* Pagination */}
-      <div className="flex justify-end space-x-2 mt-4">
-        <Button
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <ChevronLeft />
+      <div className="flex justify-end space-x-2">
+        <Button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+          Previous
         </Button>
-        <Button
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          <ChevronRight />
+        <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          Next
         </Button>
       </div>
 
       {/* Add Employee Modal */}
-      {isModalOpen && <p>Modal Component Here</p>}
+      {isModalOpen && (
+     <h2>sdhjewuew</h2>
+      )}
     </div>
   );
 };

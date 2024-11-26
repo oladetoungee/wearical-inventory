@@ -1,6 +1,6 @@
 import { DashboardLayout } from '@/components/layout';
 import { DashboardHome, DashboardCharts } from '@/components/dashboard';
-import {EmployeeTable} from '@/components/employee';
+ import {EmployeeTable} from '@/components/employee';
 
 
 export default function EmployeePage() {
