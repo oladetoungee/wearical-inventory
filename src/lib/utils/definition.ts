@@ -3,9 +3,12 @@ import { User } from 'firebase/auth';
 export interface UserData {
     uid: string;
     email: string;
-    username?: string;
-    role: 'Admin' | 'Sales' | 'Manager';
-    [key: string]: any; 
+    fullName?: string;
+    phone?: string;
+    role: 'Admin' |  "Sub Admin" |   "Sales Personnel" | "Store Manager";
+ createdAt?: string;
+ createdBy?: string;
+
   }
 
   export interface UserContextType {
