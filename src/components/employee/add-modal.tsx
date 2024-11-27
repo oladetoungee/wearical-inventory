@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui";
-import { addEmployee } from "@/lib/services/auth";
+import axios from "axios";
 import { toast } from 'react-toastify';
 
 type EmployeeFormInputs = {
@@ -44,6 +44,11 @@ export const AddEmployeeModal = ({
   } = useForm<EmployeeFormInputs>();
 
   const [loading, setLoading] = useState(false);
+
+   const addEmployee = async (email: string, fullName: string, phone: string, role: string) => {
+    const response = await axios.post("/api/add-employee", { email, fullName, phone, role });
+    return response.data; // Contains email and password
+  };
 
   const onSubmit = async (data: EmployeeFormInputs) => {
     setLoading(true);
