@@ -1,41 +1,51 @@
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { setCookie, destroyCookie } from 'nookies'; // Import cookie functions
+import { setCookie, destroyCookie } from 'nookies'; 
 import { ref, set } from 'firebase/database';
 import { randomBytes } from 'crypto'; 
 import { auth, db } from '../utils/firebase';
+import axios from "axios";
 
 
 
 export const addEmployee = async (email: string, fullName: string, phone: string, role: string) => {
   try {
-    // Generate a random password
-    const password = randomBytes(8).toString('hex'); // Auto-generate password
+    // Save the current user's email and token
+    const currentUser = auth.currentUser;
+    const currentToken = await currentUser?.getIdToken();
 
-    // Create user account
+    if (!currentUser || !currentToken) {
+      throw new Error('No authenticated user to perform this action');
+    }
+
+    const password = randomBytes(8).toString('hex');
+
+    // Create the employee account
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Save all employee details to Firebase Realtime Database
+    // Save employee details to the Realtime Database
     await set(ref(db, `users/${user.uid}`), {
       email: user.email,
       fullName: fullName,
       phone: phone,
       role: role,
-      createdBy: auth.currentUser?.uid, // Track the admin who created the user
-      createdAt: new Date().toISOString(), // Add a timestamp
+      createdBy: currentUser.uid,
+      createdAt: new Date().toISOString(),
     });
-    await set(ref(db, `employees/${user.uid}`), {
-      email: user.email,
-      fullName: fullName,
-      phone: phone,
-      role: role,
-      createdBy: auth.currentUser?.uid, // Track the admin who created the user
-      createdAt: new Date().toISOString(), // Add a timestamp
+
+    // Send email to the new employee
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    await axios.post(`${baseUrl}/api/newMember`, {
+      to: email,
+      fullName,
+      password,
     });
 
     console.log(`Employee account created. Email: ${email}, Password: ${password}`);
-    return { email, password }; // Return login details for sharing
+
+
+    return { email, password };
   } catch (error) {
     console.error('Error adding employee:', error);
     throw error;

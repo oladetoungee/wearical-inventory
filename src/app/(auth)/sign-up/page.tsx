@@ -23,11 +23,11 @@ const SignUp = () => {
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     try {
       await signUp(data.email, data.password, data.fullName);
-      toast.success('Account created successfully!');
+      // toast.success('Account created successfully!');
       reset();
       router.push('/');
     } catch (error) {
-      toast.error('Failed to create an account. Please try again.');
+      // toast.error('Failed to create an account. Please try again.');
     }
   };
 

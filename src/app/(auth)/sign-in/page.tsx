@@ -22,11 +22,11 @@ const SignIn = () => {
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     try {
       await signIn(data.email, data.password);
-      toast.success('Signed in successfully!');
+      // toast.success('Signed in successfully!');
       reset();
       router.push('/');
     } catch (error) {
-      toast.error('Sign in failed. Please check your credentials.');
+      // toast.error('Sign in failed. Please check your credentials.');
     }
   };
 

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -19,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui";
-import { addEmployee } from "@/lib/services/auth"; // Adjust the import path based on your project structure
+import { addEmployee } from "@/lib/services/auth";
+import { toast } from 'react-toastify';
 
 type EmployeeFormInputs = {
   fullName: string;
@@ -50,15 +50,13 @@ export const AddEmployeeModal = ({
     try {
       const { email, fullName, phone, role } = data;
       const result = await addEmployee(email, fullName, phone, role);
-      console.log("Employee added:", result);
-
-      // Reset the form after successful submission
       reset();
 
-      // Close the modal
       onOpenChange(false);
+   toast.success(`Employee added successfully.`);
     } catch (error) {
-      console.error("Failed to add employee:", error);
+      console.error('Error adding employee:', error);
+     toast.error('Failed to add employee. Please try again.');
     } finally {
       setLoading(false);
     }
