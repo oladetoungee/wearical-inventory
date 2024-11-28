@@ -5,12 +5,14 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-
-    if (!body || !body.uid) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
-
+    if (req.method !== 'POST') {
+        return NextResponse.json({ error: "Invalid request method" }, { status: 405 });
+      }
+  
+      const body = await req.json().catch(() => null);
+      if (!body) {
+        return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
+      }
     const { uid } = body;
 
     const userRecord = await adminAuth.getUser(uid);  
