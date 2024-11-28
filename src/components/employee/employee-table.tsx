@@ -37,14 +37,9 @@ import { AddEmployeeModal } from './add-modal';
 import { ViewEmployeeModal } from './view-modal';
 import { UpdateEmployeeModal } from './update-modal';
 import { ConfirmDeleteModal } from './delete-modal';
-import { UserData } from '@/lib/utils';
+import { UserData, ROLE_COLORS } from '@/lib/utils';
 
-const ROLE_COLORS: Record<string, string> = {
-  Admin: 'bg-red-100 text-red-700',
-  'Sub Admin': 'bg-blue-100 text-blue-700',
-  'Sales Personnel': 'bg-green-100 text-green-700',
-  'Store Manager': 'bg-yellow-100 text-yellow-700',
-};
+
 
 const formatDate = (isoDate?: string) =>
   isoDate

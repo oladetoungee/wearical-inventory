@@ -3,6 +3,7 @@ import React from 'react';
 import { Menu } from 'lucide-react';
 import { Breadcrumb, Spinner, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator,  Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { useUser } from '@/lib/hooks';
+import {  ROLE_COLORS } from '@/lib/utils';
 
 interface HeaderProps {
     toggleSidebar: () => void;
@@ -12,12 +13,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ toggleSidebar, currentPage }) => {
     const { userData, loading } = useUser();
 
-    const roleStyles = {
-        Admin: 'text-green100 bg-greenFade',
-        Sales: 'text-blue100 bg-t logged inblueFade',
-        Manager: 'text-orange100 bg-orangeFade',
-    };
-
+  
     return (
         <div className="flex items-center justify-between p-4 bg-white shadow-md">
             <div className="flex items-center space-x-2">
@@ -47,10 +43,10 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, currentPage }) => {
 
                 <div className="flex items-center space-x-2">
                     {userData?.role && (
-                        <p className={`px-2 py-1 text-xs font-medium ${roleStyles[userData.role]}`}>{userData.role}</p>
+                        <p className={`px-2 py-1 text-xs font-medium ${ROLE_COLORS[userData.role]}`}>{userData.role}</p>
                     )}
                     <Avatar>
-                        <AvatarImage src={userData?.photoURL} />
+                        <AvatarImage src={userData?.avatarUrl} />
                         <AvatarFallback>{userData?.fullName?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
                 </div>
