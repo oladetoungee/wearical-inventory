@@ -47,7 +47,7 @@ export const AddEmployeeModal = ({
 
    const addEmployee = async (email: string, fullName: string, phone: string, role: string) => {
     const response = await axios.post("/api/add-employee", { email, fullName, phone, role });
-    return response.data; // Contains email and password
+    return response.data; 
   };
 
   const onSubmit = async (data: EmployeeFormInputs) => {

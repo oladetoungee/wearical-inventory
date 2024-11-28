@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input, Button } from '@/components/ui';
+import { Input, Button, Spinner } from '@/components/ui';
 import { EmptyState } from '../layout';
 import { useUsers } from '@/lib/hooks/useEmployees';
 import {
@@ -70,7 +70,6 @@ export const EmployeeTable = () => {
 
   const { users, loading, error } = useUsers();
 
-  // Filter and prepare user data
   const filteredUsers = useMemo(() => {
     if (loading || error) return [];
     return users.filter((user) => {
@@ -80,7 +79,7 @@ export const EmployeeTable = () => {
     });
   }, [users, search, roleFilter, loading, error]);
 
-  // Define columns
+
   const columns = useMemo<ColumnDef<typeof users[number]>[]>(
     () => [
       {
@@ -175,7 +174,6 @@ export const EmployeeTable = () => {
 
   return (
     <div className="space-y-4">
-      {/* Search and Filter Section */}
       <div className="flex items-center justify-between">
         <Input
           placeholder="Search employees..."
@@ -236,14 +234,13 @@ export const EmployeeTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-                {loading ? 'Loading...' : <EmptyState type="employee" />}
+                {loading ? <Spinner/> : <EmptyState type="employee" />}
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
 
-      {/* Pagination */}
       <div className="flex justify-end space-x-2">
         <Button
           onClick={() => table.previousPage()}

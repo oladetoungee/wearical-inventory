@@ -5,7 +5,6 @@ import { sendMail } from "@/lib/utils/sendMail";
 
 export async function POST(req: Request) {
   try {
-    // Ensure the request body is valid and not undefined
     const body = await req.json();
     if (!body) {
       return NextResponse.json({ error: "Request body is empty" }, { status: 400 });

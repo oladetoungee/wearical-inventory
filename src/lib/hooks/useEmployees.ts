@@ -7,6 +7,7 @@ interface UseUsersResult {
   users: UserData[];
   loading: boolean;
   error: Error | null;
+  fetchUsers: () => Promise<void>;
 }
 
 export const useUsers = (): UseUsersResult => {
@@ -38,5 +39,5 @@ export const useUsers = (): UseUsersResult => {
     fetchUsers();
   }, [fetchUsers]);
 
-  return { users, loading, error };
+  return { users, loading, error, fetchUsers };
 };

@@ -25,7 +25,6 @@ export const UpdateEmployeeModal = ({ open, onOpenChange, employee }: UpdateEmpl
   const { register, handleSubmit, control, reset, formState: { errors } } = useForm<EmployeeFormInputs>();
   const [loading, setLoading] = useState(false);
 
-  // Reset form values whenever the `employee` prop changes
   useEffect(() => {
     if (employee) {
       reset({
@@ -106,7 +105,7 @@ export const UpdateEmployeeModal = ({ open, onOpenChange, employee }: UpdateEmpl
               render={({ field }) => (
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value} // Dynamically set the selected value
+                  defaultValue={field.value} 
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Role" />
