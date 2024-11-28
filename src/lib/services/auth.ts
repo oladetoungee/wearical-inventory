@@ -4,11 +4,6 @@ import { setCookie, destroyCookie } from 'nookies';
 import { ref, set } from 'firebase/database';
 import { auth, db } from '../utils/firebase';
 
-
-
-
-
-
 // Function to sign up a user
 export const signUp = async (email: string, password: string, fullName: string) => {
   try {
@@ -24,6 +19,8 @@ export const signUp = async (email: string, password: string, fullName: string) 
       email: user.email,
       uid: user.uid,
       fullName: fullName,
+      createdAt: new Date().toISOString(),
+      role: "Admin",
     });
 
     return user;

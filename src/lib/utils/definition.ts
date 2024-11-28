@@ -8,6 +8,7 @@ export interface UserData {
     role: 'Admin' |  "Sub Admin" |   "Sales Personnel" | "Store Manager";
  createdAt?: string;
  createdBy?: string;
+ avatarUrl?: string
 
   }
 

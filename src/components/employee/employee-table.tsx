@@ -34,6 +34,10 @@ import {
   ListFilterIcon,
 } from 'lucide-react';
 import { AddEmployeeModal } from './add-modal';
+import { ViewEmployeeModal } from './view-modal';
+import { UpdateEmployeeModal } from './update-modal';
+import { ConfirmDeleteModal } from './delete-modal';
+import { UserData } from '@/lib/utils';
 
 const ROLE_COLORS: Record<string, string> = {
   Admin: 'bg-red-100 text-red-700',
@@ -53,6 +57,14 @@ const formatDate = (isoDate?: string) =>
 
 export const EmployeeTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+ 
+  
+  const [selectedEmployee, setSelectedEmployee] = useState<UserData | null>(null);
+
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
 
@@ -114,20 +126,35 @@ export const EmployeeTable = () => {
       {
         accessorKey: 'actions',
         header: 'Actions',
-        cell: () => (
+        cell: ({ row }) => (
           <div className="flex items-center justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <MoreVertical className="cursor-pointer" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedEmployee(row.original);
+                    setIsViewModalOpen(true);
+                  }}
+                >
                   <EyeIcon className="mr-2" /> View
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedEmployee(row.original);
+                    setIsUpdateModalOpen(true);
+                  }}
+                >
                   <UserPenIcon className="mr-2" /> Update
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedEmployee(row.original);
+                    setIsDeleteModalOpen(true);
+                  }}
+                >
                   <DeleteIcon className="mr-2" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -148,6 +175,7 @@ export const EmployeeTable = () => {
 
   return (
     <div className="space-y-4">
+      {/* Search and Filter Section */}
       <div className="flex items-center justify-between">
         <Input
           placeholder="Search employees..."
@@ -181,6 +209,7 @@ export const EmployeeTable = () => {
         </div>
       </div>
 
+      {/* Table Section */}
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -214,6 +243,7 @@ export const EmployeeTable = () => {
         </TableBody>
       </Table>
 
+      {/* Pagination */}
       <div className="flex justify-end space-x-2">
         <Button
           onClick={() => table.previousPage()}
@@ -229,9 +259,25 @@ export const EmployeeTable = () => {
         </Button>
       </div>
 
+      {/* Modals */}
       <AddEmployeeModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
+      />
+      <ViewEmployeeModal
+        open={isViewModalOpen}
+        onOpenChange={setIsViewModalOpen}
+        employee={selectedEmployee}
+      />
+      <UpdateEmployeeModal
+        open={isUpdateModalOpen}
+        onOpenChange={setIsUpdateModalOpen}
+        employee={selectedEmployee}
+      />
+      <ConfirmDeleteModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        employee={selectedEmployee}
       />
     </div>
   );
