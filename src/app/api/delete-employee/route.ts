@@ -4,32 +4,41 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    // Ensure the request is a POST method
+    // Ensure request method is POST
     if (req.method !== 'POST') {
       return NextResponse.json({ error: "Invalid request method" }, { status: 405 });
     }
 
-    // Parse the request body and handle invalid JSON
-    const body = await req.json().catch(() => null);
-    if (!body || !body.uid) {
-      return NextResponse.json({ error: "Invalid JSON or missing required fields" }, { status: 400 });
+    // Ensure the request body exists
+    const bodyText = await req.text().catch(() => null);
+    if (!bodyText) {
+      return NextResponse.json({ error: "Request body is missing" }, { status: 400 });
     }
 
-    const { uid } = body;
+    let body;
+    try {
+      body = JSON.parse(bodyText);
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
+    }
 
-    // Fetch the user record from Firebase Admin
+    // Validate the `uid` field
+    const { uid } = body;
+    if (!uid) {
+      return NextResponse.json({ error: "Missing required 'uid' field" }, { status: 400 });
+    }
+
+    // Fetch user record
     const userRecord = await adminAuth.getUser(uid).catch(() => null);
     if (!userRecord) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Remove user data from the database
+    // Remove user data and delete user
     await adminDb.ref(`users/${uid}`).remove();
-
-    // Delete the user account from Firebase Authentication
     await adminAuth.deleteUser(uid);
 
-    // Send notification email to the user
+    // Send notification email
     await sendMail({
       to: userRecord.email || "no-reply@yourdomain.com",
       subject: `Your Wearical Account Has Been Removed`,
@@ -44,7 +53,6 @@ export async function POST(req: Request) {
     });
 
     console.log(`User deleted successfully. UID: ${uid}`);
-
     return NextResponse.json({ message: "User deleted and notified successfully." }, { status: 200 });
   } catch (error: any) {
     console.error("Error deleting employee:", error);
