@@ -5,9 +5,13 @@ import { sendMail } from "@/lib/utils/sendMail";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    if (req.method !== 'POST') {
+      return NextResponse.json({ error: "Invalid request method" }, { status: 405 });
+    }
+
+    const body = await req.json().catch(() => null);
     if (!body) {
-      return NextResponse.json({ error: "Request body is empty" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
     }
 
     const { email, fullName, phone, role } = body;
@@ -60,4 +64,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to add employee" }, { status: 500 });
   }
 }
-
