@@ -62,7 +62,7 @@ const Sidebar = ({ isOpen, toggleSidebar, setCurrentPage }: SidebarProps) => {
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 md:py-4">
                 <div className="flex items-center">
                     <Avatar>
-                        <AvatarImage src={userData?.photoURL} />
+                        <AvatarImage src={userData?.avatarUrl} />
                         <AvatarFallback>{userData?.fullName?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
                     <p className="text-sm font-semibold">{userData?.fullName}</p>
