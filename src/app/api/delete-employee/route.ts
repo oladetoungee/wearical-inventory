@@ -9,20 +9,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid request method" }, { status: 405 });
     }
 
-    // Ensure the request body exists
+    // Log and sanitize the request body
     const bodyText = await req.text().catch(() => null);
+    console.log("Raw request body:", bodyText);
+
     if (!bodyText) {
       return NextResponse.json({ error: "Request body is missing" }, { status: 400 });
     }
 
+    const sanitizedBodyText = bodyText.replace(/[\x00-\x1F\x7F-\x9F]/g, ""); // Remove control characters
+
     let body;
     try {
-      body = JSON.parse(bodyText);
+      body = JSON.parse(sanitizedBodyText);
     } catch {
       return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
     }
 
-    // Validate the `uid` field
+    // Validate the uid field
     const { uid } = body;
     if (!uid) {
       return NextResponse.json({ error: "Missing required 'uid' field" }, { status: 400 });
@@ -41,7 +45,7 @@ export async function POST(req: Request) {
     // Send notification email
     await sendMail({
       to: userRecord.email || "no-reply@yourdomain.com",
-      subject: `Your Wearical Account Has Been Removed`,
+      subject: "Your Wearical Account Has Been Removed",
       title: "Account Removal Notification",
       paragraphs: [
         `Dear ${userRecord.displayName || "User"},`,
@@ -57,7 +61,6 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("Error deleting employee:", error);
 
-    // Differentiate between specific and general errors
     const errorMessage =
       error.code === "auth/user-not-found"
         ? "User not found"
@@ -67,3 +70,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: errorMessage }, { status: errorStatus });
   }
 }
+
