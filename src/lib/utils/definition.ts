@@ -35,5 +35,5 @@ export const ROLE_COLORS: Record<string, string> = {
   'Admin': 'bg-red-100 text-red-700',
   'Sub Admin': 'bg-blue-100 text-blue-700',
   'Sales Personnel': 'bg-green-100 text-green-700',
-  'Store Manager': 'bg-yellow-100 text-yellow-700',
+  'Store Manager': 'bg-amber-100 text-amber-700',
 };
