@@ -1,11 +1,10 @@
 import { DashboardLayout } from '@/components/layout';
- import {EmployeeTable} from '@/components/employee';
 
 
 export default function EmployeePage() {
   return (
     <DashboardLayout>
-    <EmployeeTable />
+      <h1>settings</h1>
   </DashboardLayout>
   );
 }
