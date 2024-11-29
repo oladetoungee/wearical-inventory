@@ -1,7 +1,10 @@
 import * as admin from 'firebase-admin';
 
 if (!admin.apps.length) {
-  const firebaseCredentials = JSON.parse(process.env.FIREBASE_ADMIN_SDK as string);
+  const firebaseCredentials = JSON.parse(
+    (process.env.FIREBASE_ADMIN_SDK as string).replace(/\\n/g, '\n')
+  );
+  console.log(firebaseCredentials);
 
   admin.initializeApp({
     credential: admin.credential.cert(firebaseCredentials),
