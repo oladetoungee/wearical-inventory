@@ -105,7 +105,7 @@ export const EmployeeTable = () => {
           const roleClass = ROLE_COLORS[role] || 'bg-gray-100 text-gray-700';
           return (
             <span
-              className={`px-2 py-1 rounded-md text-sm font-medium ${roleClass}`}
+              className={`px-2 py-1 rounded-md text-xs font-medium ${roleClass}`}
             >
               {role}
             </span>
