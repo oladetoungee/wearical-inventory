@@ -1,16 +1,26 @@
 import * as admin from 'firebase-admin';
 
 if (!admin.apps.length) {
+  // Check if FIREBASE_ADMIN_KEY exists
+  const firebaseAdminKey = process.env.FIREBASE_ADMIN_KEY;
+
+  if (!firebaseAdminKey) {
+    throw new Error('FIREBASE_ADMIN_KEY environment variable is not defined!');
+  }
+
+  // Decode the base64 string
   const firebaseCredentials = JSON.parse(
-    (process.env.FIREBASE_ADMIN_SDK as string).replace(/\\n/g, '\n')
+    Buffer.from(firebaseAdminKey, 'base64').toString('utf8')
   );
-  console.log(firebaseCredentials);
+
+  console.log('firebaseCredentials:', firebaseCredentials);
 
   admin.initializeApp({
     credential: admin.credential.cert(firebaseCredentials),
-      databaseURL: "https://wearical-default-rtdb.firebaseio.com"
+    databaseURL: "https://wearical-default-rtdb.firebaseio.com"
   });
 }
+
 
 export const verifyIdToken = async (token: string) => {
   try {
