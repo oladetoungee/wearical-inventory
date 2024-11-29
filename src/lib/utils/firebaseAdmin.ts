@@ -3,9 +3,10 @@ import * as admin from 'firebase-admin';
 if (!admin.apps.length) {
   // Check if FIREBASE_ADMIN_KEY exists
   const firebaseAdminKey = process.env.NEXT_PUBLIC_FIREBASE_ADMIN_KEY;
+  console.log('firebaseAdminKey:', firebaseAdminKey);
 
   if (!firebaseAdminKey) {
-    throw new Error('FIREBASE_ADMIN_KEY environment variable is not defined!');
+    throw new Error('admin key from env environment variable is not defined!');
   }
 
   // Decode the base64 string
