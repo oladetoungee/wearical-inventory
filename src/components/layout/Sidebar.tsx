@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogOut, LayoutPanelLeft, CalendarCheck2, ChartBar, Users, ClipboardList, Settings as SettingsIcon, X } from 'lucide-react';
@@ -17,7 +17,7 @@ interface NavItem {
 interface SidebarProps {
     isOpen: boolean;
     toggleSidebar: () => void;
-    setCurrentPage: (page: string) => void;
+
 }
 
 const navItems: NavItem[] = [
@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
     { name: 'Settings', path: '/settings', icon: <SettingsIcon className="w-5 h-5" /> },
 ];
 
-const Sidebar = ({ isOpen, toggleSidebar, setCurrentPage }: SidebarProps) => {
+const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     const { userData } = useUser();
     const currentPath = usePathname(); 
 
@@ -51,7 +51,6 @@ const Sidebar = ({ isOpen, toggleSidebar, setCurrentPage }: SidebarProps) => {
                         className={`flex items-center mx-4 my-2 px-3 py-2 rounded transition-colors duration-200 text-xs hover:bg-primary100 hover:text-white md:mx-8 md:px-4 md:py-3 md:text-sm ${
                             currentPath === item.path ? 'bg-primary100 text-white' : 'hover:bg-gray-600'
                         }`}
-                        onClick={() => setCurrentPage(item.name)}
                     >
                         {item.icon}
                         <span className="ml-2">{item.name}</span>
