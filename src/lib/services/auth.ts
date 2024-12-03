@@ -1,8 +1,9 @@
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { setCookie, destroyCookie } from 'nookies'; 
 import { ref, set } from 'firebase/database';
 import { auth, db } from '../utils/firebase';
+
 
 // Function to sign up a user
 export const signUp = async (email: string, password: string, fullName: string) => {
@@ -48,4 +49,35 @@ export const signIn = async (email: string, password: string) => {
 export const logOut = async () => {
   await signOut(auth); // Sign out from Firebase
   destroyCookie(null, 'token'); // Remove the token cookie
+};
+
+// Function to update user password
+export const updateUserPassword = async (currentPassword: string, newPassword: string) => {
+  try {
+    // Get the current user
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error('No user is currently signed in.');
+    }
+
+    // Ensure the email and password are correctly passed
+    if (!user.email) {
+      throw new Error('User email is not available.');
+    }
+
+    // Create the credential with the current password
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+
+    // Reauthenticate the user
+    await reauthenticateWithCredential(user, credential);
+
+    // Once reauthenticated, update the password
+    await updatePassword(user, newPassword);
+
+    console.log('Password updated successfully');
+  } catch (error) {
+    console.error('Error updating password:', error);
+    throw error; // Propagate the error
+  }
 };
