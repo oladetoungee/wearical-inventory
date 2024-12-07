@@ -14,7 +14,7 @@ import {
   Button, Spinner
 } from "@/components/ui";
 import { toast } from 'react-toastify';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui"; 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { useUser } from '@/lib/hooks';
 import { storage, db } from '@/lib/utils/firebase';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -33,7 +33,7 @@ export const InfoCard = () => {
   });
 
 
-useEffect(() => {
+  useEffect(() => {
     if (!loading && userData) {
       reset({
         fullName: userData.fullName || '',
@@ -92,33 +92,33 @@ useEffect(() => {
 
       <CardContent>
         <div className="flex flex-col my-8">
-        <div className="relative">
-  <Avatar className="w-48 h-48">
-    <AvatarImage
-      src={userData?.avatarUrl || '/default-avatar.png'}
-      alt="User Avatar"
-    />
-    <AvatarFallback>
-      {userData?.fullName
-        ? userData?.fullName
-            .split(' ')
-            .slice(0, 2)
-            .map(word => word[0])
-            .join('')
-        : 'UA'}
-    </AvatarFallback>
-  </Avatar>
-    <label htmlFor="avatar" className="absolute bottom-0 left-32 bg-black100 text-white p-2 rounded-full cursor-pointer">
-    <Camera size={20} />
-    <input
-      id="avatar"
-      type="file"
-      accept="image/*"
-      className="hidden"
-      onChange={handleAvatarChange}
-    />
-  </label>
-</div>
+          <div className="relative">
+            <Avatar className="w-48 h-48">
+              <AvatarImage
+                src={userData?.avatarUrl || '/default-avatar.png'}
+                alt="User Avatar"
+              />
+              <AvatarFallback>
+                {userData?.fullName
+                  ? userData?.fullName
+                    .split(' ')
+                    .slice(0, 2)
+                    .map(word => word[0])
+                    .join('')
+                  : 'UA'}
+              </AvatarFallback>
+            </Avatar>
+            <label htmlFor="avatar" className="absolute bottom-0 left-32 bg-black100 text-white p-2 rounded-full cursor-pointer">
+              <Camera size={20} />
+              <input
+                id="avatar"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+            </label>
+          </div>
 
         </div>
 

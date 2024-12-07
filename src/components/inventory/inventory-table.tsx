@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input, Button, Spinner, DatePickerWithRange } from '@/components/ui';
+
 import { EmptyState } from '../layout';
 import { useInventory } from '@/lib/hooks'; 
 import {
@@ -97,7 +98,7 @@ export const InventoryTable = () => {
       {
         accessorKey: 'price',
         header: 'Price',
-        cell: ({ row }) => `$${row.original.price.toFixed(2)}`,
+        cell: ({ row }) => `$${row.original.costPrice.toFixed(2)}`,
       },
       {
         accessorKey: 'createdAt',
@@ -113,8 +114,14 @@ export const InventoryTable = () => {
         accessorKey: 'status',
         header: 'Status',
         cell: ({ row }) => {
-          const status = row.original.status;
-          const statusClass = STATUS_COLORS[status] || 'bg-gray-100 text-gray-700';
+          const status =
+          row.original.quantity > row.original.thresholdValue
+            ? 'In Stock'
+            : row.original.quantity > 0
+            ? 'Low Stock'
+            : 'Out of Stock';
+        
+          const statusClass = STATUS_COLORS[status];
           return (
             <span className={`px-2 py-1 rounded-md text-xs font-medium ${statusClass}`}>
               {status}

@@ -77,4 +77,7 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  label {
+    @apply text-xs text-foreground;
+  }
 }
