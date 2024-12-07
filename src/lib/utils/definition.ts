@@ -37,3 +37,24 @@ export const ROLE_COLORS: Record<string, string> = {
   'Sales Personnel': 'bg-green-100 text-green-700',
   'Store Manager': 'bg-amber-100 text-amber-700',
 };
+
+
+export interface InventoryData {
+name: string;
+description: string;
+category: string;
+quantity: number;
+price: number;
+dateCreated: string;
+dateUpdated: string;
+createdBy: string;
+location: 'Online' | 'Store';
+status: "In Stock" | "Low Stock" | "Out of Stock";
+productImageUrl?: string;
+}
+
+export const STATUS_COLORS: Record<string, string> = {
+  'In Stock': 'bg-green-100 text-green-700',
+  'Low Stock': 'bg-amber-100 text-amber-700',
+  'Out of Stock': 'bg-red-100 text-red-700',
+};

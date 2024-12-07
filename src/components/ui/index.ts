@@ -10,3 +10,4 @@ export * from './table';
 export * from './spinner'
 export * from './dropdown-menu'
 export * from './select'
+export * from './date'

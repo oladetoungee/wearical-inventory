@@ -1,5 +1,10 @@
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+  signOut, updatePassword, reauthenticateWithCredential,
+   EmailAuthProvider,   
+   reauthenticateWithPopup, 
+   GoogleAuthProvider, 
+   } from 'firebase/auth';
 import { setCookie, destroyCookie } from 'nookies'; 
 import { ref, set } from 'firebase/database';
 import { auth, db } from '../utils/firebase';
@@ -52,32 +57,43 @@ export const logOut = async () => {
 };
 
 // Function to update user password
-export const updateUserPassword = async (currentPassword: string, newPassword: string) => {
+export const updateUserPassword = async (currentPassword: any, newPassword: any) => {
   try {
-    // Get the current user
     const user = auth.currentUser;
 
     if (!user) {
       throw new Error('No user is currently signed in.');
     }
 
-    // Ensure the email and password are correctly passed
-    if (!user.email) {
-      throw new Error('User email is not available.');
+    // Determine the provider
+    const providerData = user.providerData[0];
+    const providerId = providerData.providerId;
+
+    let credential;
+
+    if (providerId === 'password') {
+      if (!user.email) {
+        throw new Error('User email is not available.');
+      }
+      credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+    } else if (providerId === 'google.com') {
+      const provider = new GoogleAuthProvider();
+      await reauthenticateWithPopup(user, provider);
+    } else {
+      throw new Error(`Unsupported provider: ${providerId}`);
     }
 
-    // Create the credential with the current password
-    const credential = EmailAuthProvider.credential(user.email, currentPassword);
-
-    // Reauthenticate the user
-    await reauthenticateWithCredential(user, credential);
-
-    // Once reauthenticated, update the password
+    // Update the password
     await updatePassword(user, newPassword);
-
     console.log('Password updated successfully');
-  } catch (error) {
-    console.error('Error updating password:', error);
+  } catch (error: any) {
+    console.error('Error updating password:', error.code, error.message);
+    if (error.code === 'auth/invalid-credential') {
+      console.log('The current password is incorrect. Please try again.');
+    } else {
+      console.log(`Error updating password: ${error.message}`);
+    }
     throw error; // Propagate the error
   }
 };
