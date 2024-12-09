@@ -3,51 +3,45 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui';
-import { UserData } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import axios from "axios";
 
-type DeleteEmployeeModalProps = {
+interface DeleteModalProps {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  employee: UserData | null;
-};
+  inventoryItem: any; // Replace `any` with the correct type of your inventory data
+  onDelete: (id: string) => void; // Callback for deletion
+}
 
-export const ConfirmDeleteModal = ({ open, onOpenChange, employee }: DeleteEmployeeModalProps) => {
+export const DeleteModal = ({ open, onOpenChange, inventoryItem, onDelete }: DeleteModalProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
-  try {
     setLoading(true);
-    const response = await axios.post('/api/delete-employee', {
-      uid: employee?.uid,
-    });
-   toast.success('Employee deleted successfully.');
-    onOpenChange(false);
-  }
-  catch (error) {
-    console.error('Error deleting employee:', error);
-    toast.error('Failed to delete employee. Please try again.');
-  }
-  finally {
-    setLoading(false);
-    onOpenChange(false);
-  }
+    try {
+      await onDelete(inventoryItem.id);
+      onOpenChange(false);
+      toast.success("Item deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast.error("Failed to delete item. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent >
+      <DialogContent>
         <DialogHeader>
-        <DialogTitle className="text-center p-4">Delete Employee</DialogTitle>
+          <DialogTitle>Delete Item</DialogTitle>
         </DialogHeader>
-        <p className='text-xs text-center p-2'>Are you sure you want to delete this employee - {employee?.fullName}? </p>
+        <p>Are you sure you want to delete <strong>{inventoryItem.name}</strong>?</p>
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={loading}>
             Cancel
           </Button>
-          <Button className="bg-[#CC4424] text-white" onClick={handleDelete} disabled={loading}>
-            {loading ? 'Deleting...' : 'Delete'}
+          <Button onClick={handleDelete} className="bg-red-500 text-white" disabled={loading}>
+            {loading ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

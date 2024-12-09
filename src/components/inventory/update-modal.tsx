@@ -1,51 +1,35 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Input, Button, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui';
-import { updateEmployee } from '@/lib/services/employee';
+import { Input, Button } from '@/components/ui';
 import { toast } from 'react-toastify';
-import { UserData } from '@/lib/utils';
 
-type EmployeeFormInputs = {
-  fullName: string;
-  email: string;
-  phone: string;
-  role: string;
-};
-
-type UpdateEmployeeModalProps = {
+interface UpdateModalProps {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  employee: UserData | null;
-};
+  inventoryItem: any; // Replace `any` with the correct type of your inventory data
+  onSave: (updatedData: any) => void; // Callback for saving changes
+}
 
-export const UpdateEmployeeModal = ({ open, onOpenChange, employee }: UpdateEmployeeModalProps) => {
-  const { register, handleSubmit, control, reset, formState: { errors } } = useForm<EmployeeFormInputs>();
+export const UpdateModal = ({ open, onOpenChange, inventoryItem, onSave }: UpdateModalProps) => {
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: inventoryItem,
+  });
+
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (employee) {
-      reset({
-        fullName: employee.fullName || '',
-        email: employee.email || '',
-        phone: employee.phone || '',
-        role: employee.role || '',
-      });
-    }
-  }, [employee, reset]);
-
-  const onSubmit = async (data: EmployeeFormInputs) => {
-    if (!employee) return;
+  const onSubmit = async (data: any) => {
     setLoading(true);
     try {
-      await updateEmployee(employee.uid, data);
-      toast.success('Employee updated successfully.');
+      await onSave(data);
+      reset();
       onOpenChange(false);
+      toast.success("Item updated successfully.");
     } catch (error) {
-      console.error('Error updating employee:', error);
-      toast.error('Failed to update employee. Please try again.');
+      console.error("Error updating item:", error);
+      toast.error("Failed to update item. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -55,80 +39,38 @@ export const UpdateEmployeeModal = ({ open, onOpenChange, employee }: UpdateEmpl
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-        <DialogTitle className="text-center p-4">Update Employee</DialogTitle>
+          <DialogTitle>Edit Item</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
-            <label htmlFor="fullName" className="block text-sm font-medium">
-              Name
-            </label>
+            <label htmlFor="name">Name</label>
             <Input
-              id="fullName"
-              {...register('fullName', { required: 'Name is required' })}
+              id="name"
+              {...register('name', { required: 'Name is required' })}
             />
-            {errors.fullName && (
-              <p className="text-sm text-red-500">{errors.fullName.message}</p>
-            )}
+            {errors.name && <p className="text-sm text-red-500">{errors.name?.message}</p>}
           </div>
+
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium">
-              Email
-            </label>
+            <label htmlFor="category">Category</label>
+            <Input id="category" {...register('category')} />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="quantity">Quantity</label>
             <Input
-              id="email"
-              {...register('email', { required: 'Email is required' })}
+              id="quantity"
+              type="number"
+              {...register('quantity', { valueAsNumber: true })}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
-            )}
           </div>
-          <div className="space-y-2">
-            <label htmlFor="phone" className="block text-sm font-medium">
-              Phone
-            </label>
-            <Input
-              id="phone"
-              {...register('phone', { required: 'Phone is required' })}
-            />
-            {errors.phone && (
-              <p className="text-sm text-red-500">{errors.phone.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="role" className="block text-sm font-medium">
-              Role
-            </label>
-            <Controller
-              name="role"
-              control={control}
-              rules={{ required: 'Role is required' }}
-              render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value} 
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Admin">Admin</SelectItem>
-                    <SelectItem value="Sub Admin">Sub Admin</SelectItem>
-                    <SelectItem value="Sales Personnel">Sales Personnel</SelectItem>
-                    <SelectItem value="Store Manager">Store Manager</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.role && (
-              <p className="text-sm text-red-500">{errors.role.message}</p>
-            )}
-          </div>
+
           <DialogFooter>
             <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={loading}>
               Cancel
             </Button>
             <Button type="submit" className="bg-primary text-white" disabled={loading}>
-              {loading ? 'Updating...' : 'Update Employee'}
+              {loading ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </form>
