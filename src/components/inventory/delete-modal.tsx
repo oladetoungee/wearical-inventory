@@ -4,21 +4,23 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui';
 import { toast } from 'react-toastify';
+import { deleteInventory } from '@/lib/services/inventory';
+import { InventoryData } from '@/lib/utils';
 
 interface DeleteModalProps {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  inventoryItem: any; // Replace `any` with the correct type of your inventory data
-  onDelete: (id: string) => void; // Callback for deletion
+  inventoryItem: InventoryData;
+
 }
 
-export const DeleteModal = ({ open, onOpenChange, inventoryItem, onDelete }: DeleteModalProps) => {
+export const DeleteModal = ({ open, onOpenChange, inventoryItem }: DeleteModalProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
     setLoading(true);
     try {
-      await onDelete(inventoryItem.id);
+      await deleteInventory(inventoryItem);
       onOpenChange(false);
       toast.success("Item deleted successfully.");
     } catch (error) {
@@ -33,7 +35,7 @@ export const DeleteModal = ({ open, onOpenChange, inventoryItem, onDelete }: Del
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Item</DialogTitle>
+          <DialogTitle>Delete Inventory Item</DialogTitle>
         </DialogHeader>
         <p>Are you sure you want to delete <strong>{inventoryItem.name}</strong>?</p>
         <DialogFooter>

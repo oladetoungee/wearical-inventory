@@ -82,7 +82,6 @@ export const ViewEmployeeModal = ({ open, onOpenChange, employee }: ViewEmployee
           <DialogTitle className="text-center p-4">Employee Details</DialogTitle>
         </DialogHeader>
 
-        {/* Avatar and Employee Info */}
         <div className="flex items-center space-x-4">
           <Avatar>
             <AvatarImage src={avatarUrl || undefined} />
@@ -94,9 +93,8 @@ export const ViewEmployeeModal = ({ open, onOpenChange, employee }: ViewEmployee
           </div>
         </div>
 
-        {/* Employee Details */}
         <div className="mt-2 space-y-4">
-          {/* Name */}
+
           <DetailRow
             icon={User}
             label="Name"
@@ -104,7 +102,6 @@ export const ViewEmployeeModal = ({ open, onOpenChange, employee }: ViewEmployee
             color="purple"
           />
 
-          {/* Email */}
           <DetailRow
             icon={Mail}
             label="Email"

@@ -38,17 +38,9 @@ import { ViewEmployeeModal } from './view-modal';
 import { UpdateEmployeeModal } from './update-modal';
 import { ConfirmDeleteModal } from './delete-modal';
 import { UserData, ROLE_COLORS } from '@/lib/utils';
+import { formatDate } from '@/lib/utils/';
 
 
-
-const formatDate = (isoDate?: string) =>
-  isoDate
-    ? new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-      }).format(new Date(isoDate))
-    : 'N/A';
 
 export const EmployeeTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -115,7 +107,7 @@ export const EmployeeTable = () => {
       {
         accessorKey: 'createdAt',
         header: 'Date Added',
-        cell: ({ row }) => formatDate(row.original.createdAt),
+        cell: ({ row }) => formatDate(row.original.createdAt || ''),
       },
       {
         accessorKey: 'actions',

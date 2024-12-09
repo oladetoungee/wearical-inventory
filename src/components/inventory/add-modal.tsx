@@ -23,7 +23,8 @@ import { addInventory } from '@/lib/services/inventory';
 import { InventoryData } from '@/lib/utils';
 import { useCategory } from '@/lib/hooks';
 import { Camera } from 'lucide-react';
-import { RadioGroup, RadioGroupItem, Checkbox } from "@/components/ui";
+import { Checkbox } from "@/components/ui";
+import { handleFileChange } from "@/lib/utils/helpers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 
 export const AddInventoryModal = ({
@@ -65,21 +66,6 @@ export const AddInventoryModal = ({
   };
   
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string); // Update the preview
-      };
-      reader.readAsDataURL(file);
-  
-      // Store the image file in state for later use in the onSubmit function
-      setImageFile(file);  // Store file in state
-    }
-  };
-  
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -88,7 +74,6 @@ export const AddInventoryModal = ({
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-2 gap-4">
-            {/* Left Side: Image & Notification Settings */}
             <div className="space-y-6">
               <div className="space-y-2">
                 <label htmlFor="image">
@@ -112,7 +97,7 @@ export const AddInventoryModal = ({
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={handleFileChange}
+                      onChange={(e) => handleFileChange(e, setImagePreview, setImageFile)}
                     />
                   </label>
                 </div>
@@ -175,8 +160,6 @@ export const AddInventoryModal = ({
              
               </div>
             </div>
-
-            {/* Right Side: Item Details Form */}
             <div className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="name">

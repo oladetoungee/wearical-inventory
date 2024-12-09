@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { formatDate } from '@/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
 import { InventoryData, STATUS_COLORS } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
@@ -11,20 +12,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { EyeIcon, EditIcon, DeleteIcon, MoreVertical } from 'lucide-react';
-import {ViewModal, DeleteModal, UpdateModal} from './';
+import {ViewModal, DeleteModal, UpdateInventoryModal} from './';
 
-const formatDate = (isoDate?: string) =>
-  isoDate
-    ? new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-      }).format(new Date(isoDate))
-    : 'N/A';
 
-const deleteInventoryItem = async (id: string) => {
-    // Implement your delete logic here
-    };
     const updateInventoryItem = async (data: InventoryData) => {
     // Implement your update logic here
     }
@@ -131,10 +121,9 @@ export const columns: ColumnDef<InventoryData>[] = [
             />
           )}
           {editModalOpen && (
-            <UpdateModal
+            <UpdateInventoryModal
               open={editModalOpen}
               onOpenChange={setEditModalOpen}
-              onSave={updateInventoryItem}
               inventoryItem={inventoryItem}
             />
           )}
@@ -142,7 +131,6 @@ export const columns: ColumnDef<InventoryData>[] = [
             <DeleteModal
               open={deleteModalOpen}
               onOpenChange={setDeleteModalOpen}
-              onDelete={deleteInventoryItem}
               inventoryItem={inventoryItem}
             />
           )}

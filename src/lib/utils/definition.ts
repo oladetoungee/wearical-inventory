@@ -56,6 +56,10 @@ emailFrequency: string;
 location: 'Online' | 'Store';
 status: "In Stock" | "Low Stock" | "Out of Stock";
 productImageUrl?: string;
+id?: string;
+restockQuantity?: number;
+restockReason?: string;
+
 }
 
 export const STATUS_COLORS: Record<string, string> = {
