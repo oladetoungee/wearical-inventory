@@ -25,6 +25,7 @@ import { useCategory } from '@/lib/hooks';
 import { Camera } from 'lucide-react';
 import { Checkbox } from "@/components/ui";
 import { handleFileChange } from "@/lib/utils/helpers";
+import { useUser } from "@/lib/hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 
 export const AddInventoryModal = ({
@@ -46,12 +47,17 @@ export const AddInventoryModal = ({
   const { categories } = useCategory();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null); 
+  const { userData } = useUser();
 
   const onSubmit = async (data: InventoryData) => {
     setLoading(true);
     try {
    
-      const result = await addInventory(data, imageFile);
+      if (userData) {
+        const result = await addInventory(data, imageFile, userData);
+      } else {
+        toast.error('User data is missing. Please try again.');
+      }
       reset();
       setImageFile(null);
       setImagePreview(null);

@@ -14,53 +14,69 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input, Button, Spinner, DatePickerWithRange } from '@/components/ui';
+import { Input, Button, Spinner } from '@/components/ui';
 import { columns } from './inventory-table-columns';
 import { EmptyState } from '../layout';
-import { useInventory } from '@/lib/hooks'; 
+import { useInventory } from '@/lib/hooks';
 import {
   ChevronsLeft,
   ChevronsRight,
   ListFilterIcon,
 } from 'lucide-react';
- import { AddInventoryModal, AddCategoryModal } from './'; 
-import { InventoryData } from '@/lib/utils';
-
+import { AddInventoryModal, AddCategoryModal } from './';
+import { DatePickerWithRange } from '@/components/ui';
+import { DateRange } from 'react-day-picker';
+import { FilterModal } from './';
 
 export const InventoryTable = () => {
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [availabilityFilter, setAvailabilityFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<[Date | null, Date | null]>([null, null]);
-  
+
+
+  const [tempCategoryFilter, setTempCategoryFilter] = useState<string>(categoryFilter);
+  const [tempLocationFilter, setTempLocationFilter] = useState<string>(locationFilter);
+  const [tempAvailabilityFilter, setTempAvailabilityFilter] = useState<string>(availabilityFilter);
 
   const { inventory, loading, error } = useInventory();
 
+
+  const categories = useMemo(() => {
+    if (!inventory) return [];
+    const categorySet = new Set(inventory.map((p) => p.category).filter(Boolean));
+    return Array.from(categorySet);
+  }, [inventory]);
+
   const filteredProducts = useMemo(() => {
-    if (loading || error) return [];
+    if (loading || error || !inventory) return [];
+
     return inventory.filter((product) => {
+      const productDate = new Date(product.dateCreated);
+      const [start, end] = dateFilter;
+
       const matchesSearch = product?.name.toLowerCase().includes(search.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
       const matchesLocation = locationFilter === 'all' || product.location === locationFilter;
       const matchesAvailability = availabilityFilter === 'all' || product.status === availabilityFilter;
       const matchesDate =
-        (!dateFilter[0] || new Date(product.dateCreated) >= dateFilter[0]) &&
-        (!dateFilter[1] || new Date(product.dateCreated) <= dateFilter[1]);
+        (!start || productDate >= start) &&
+        (!end || productDate <= end);
 
-      return matchesSearch && matchesCategory && matchesLocation && matchesAvailability && matchesDate;
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesLocation &&
+        matchesAvailability &&
+        matchesDate
+      );
     });
   }, [inventory, search, categoryFilter, locationFilter, availabilityFilter, dateFilter, loading, error]);
-
- 
 
   const table = useReactTable({
     data: filteredProducts,
@@ -68,6 +84,34 @@ export const InventoryTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const handleDateChange = (value: DateRange | undefined) => {
+    if (!value) {
+      setDateFilter([null, null]);
+    } else {
+      setDateFilter([value.from ?? null, value.to ?? null]);
+    }
+  };
+
+  const handleFilterApply = () => {
+    setCategoryFilter(tempCategoryFilter);
+    setLocationFilter(tempLocationFilter);
+    setAvailabilityFilter(tempAvailabilityFilter);
+    setIsFilterModalOpen(false);
+  };
+
+  const handleFilterCancel = () => {
+    setTempCategoryFilter(categoryFilter);
+    setTempLocationFilter(locationFilter);
+    setTempAvailabilityFilter(availabilityFilter);
+    setIsFilterModalOpen(false);
+  };
+
+  const handleFilterReset = () => {
+    setTempCategoryFilter('all');
+    setTempLocationFilter('all');
+    setTempAvailabilityFilter('all');
+  };
 
   return (
     <div className="space-y-4">
@@ -80,22 +124,20 @@ export const InventoryTable = () => {
         />
         <div className="flex space-x-2">
           <DatePickerWithRange
-        
-          
+            value={{
+              from: dateFilter[0] || undefined,
+              to: dateFilter[1] || undefined,
+            }}
+            onChange={handleDateChange}
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center px-2 py-1">
-              <ListFilterIcon className="mr-2 h-4 w-4" />
-              <span>Filter</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem
-                onClick={() => setCategoryFilter('all')}
-              >
-                All Categories
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            onClick={() => setIsFilterModalOpen(true)}
+            variant="outline"
+            className="flex items-center px-2 py-1"
+          >
+            <ListFilterIcon className="mr-2 h-4 w-4" />
+            <span>Filter</span>
+          </Button>
           <Button
             onClick={() => setIsAddCategoryModalOpen(true)}
             className="bg-primary text-white"
@@ -153,9 +195,22 @@ export const InventoryTable = () => {
         </Button>
       </div>
 
-      {/* Modals */}
       <AddCategoryModal open={isAddCategoryModalOpen} onOpenChange={setIsAddCategoryModalOpen} />
-      <AddInventoryModal open={isAddProductModalOpen} onOpenChange={setIsAddProductModalOpen}  />
+      <AddInventoryModal open={isAddProductModalOpen} onOpenChange={setIsAddProductModalOpen} />
+      <FilterModal
+        open={isFilterModalOpen}
+        onOpenChange={setIsFilterModalOpen}
+        categories={categories}
+        tempCategoryFilter={tempCategoryFilter}
+        tempLocationFilter={tempLocationFilter}
+        tempAvailabilityFilter={tempAvailabilityFilter}
+        setTempCategoryFilter={setTempCategoryFilter}
+        setTempLocationFilter={setTempLocationFilter}
+        setTempAvailabilityFilter={setTempAvailabilityFilter}
+        onApply={handleFilterApply}
+        onCancel={handleFilterCancel}
+        onReset={handleFilterReset}
+      />
     </div>
   );
 };

@@ -1,12 +1,15 @@
 import { ref, set, push, get } from 'firebase/database';
 import { db } from '../utils/firebase';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { InventoryData } from '../utils/definition';
+import { InventoryData, UserData } from '../utils/definition';
+import { stat } from 'fs';
+
 
 
 const storage = getStorage();
 
-export const addInventory = async (data: InventoryData, imageFile: File | null) => {
+
+export const addInventory = async (data: InventoryData, imageFile: File | null, user: UserData) => {
   try {
     let productImageUrl = '';
 
@@ -22,6 +25,12 @@ export const addInventory = async (data: InventoryData, imageFile: File | null) 
       dateCreated: new Date().toISOString(),
       dateUpdated: new Date().toISOString(),
       id: newInventoryRef.key,
+      createdBy: {
+        uid: user?.uid || '',
+        email: user?.email || '',
+        fullName: user?.fullName || '',
+      },
+      status: data.quantity > data.thresholdValue ? 'In Stock' : data.quantity > 0 ? 'Low Stock' : 'Out of Stock',
     });
 
     const categoryItemCountRef = ref(db, `categories/${data.category}/itemCount`);
@@ -50,9 +59,8 @@ export const deleteInventory = async (inventoryItem: InventoryData) => {
   }
 }
 
-export const updateInventory = async (data: InventoryData, imageFile: File | null) => {
+export const updateInventory = async (data: InventoryData, imageFile: File | null, user: UserData) => {
   try {
-    // Step 1: Get the current inventory item from the database
     const inventoryRef = ref(db, `inventory/${data.id}`);
     const inventorySnapshot = await get(inventoryRef);
 
@@ -61,24 +69,26 @@ export const updateInventory = async (data: InventoryData, imageFile: File | nul
     }
 
     const currentInventory = inventorySnapshot.val();
-
-    // Step 2: Handle image upload if a new image file is provided
     let productImageUrl = currentInventory.productImageUrl;
     if (imageFile) {
       const imageRef = storageRef(storage, `inventory/${data.name}/${imageFile.name}`);
       await uploadBytes(imageRef, imageFile);
       productImageUrl = await getDownloadURL(imageRef);
     }
-
-    // Step 3: Update the inventory item
     const updatedData = {
       ...currentInventory,
       ...data,
-      quantity: currentInventory.quantity + (data.restockQuantity || 0), // Update quantity with restock
-      productImageUrl, // Use the new or existing image URL
-      restockQuantity: data.restockQuantity, // Remove temporary fields
-      restockReason: data.restockReason, // Remove temporary fields
+      quantity: currentInventory.quantity + (data.restockQuantity || 0),
+      productImageUrl, 
+      restockQuantity: data.restockQuantity, 
+      restockReason: data.restockReason, 
       dateUpdated: new Date().toISOString(),
+      updatedBy: {
+        uid: user?.uid || '',
+        email: user?.email || '',
+        fullName: user?.fullName || '',
+      },
+      status: currentInventory.quantity + (data.restockQuantity || 0) > currentInventory.thresholdValue ? 'In Stock' : currentInventory.quantity + (data.restockQuantity || 0) > 0 ? 'Low Stock' : 'Out of Stock',
     };
 
     await set(inventoryRef, updatedData);

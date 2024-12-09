@@ -26,6 +26,8 @@ import { useCategory } from "@/lib/hooks";
 import { Camera } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { handleFileChange } from "@/lib/utils/helpers";
+import { useUser } from "@/lib/hooks";
+
 
 export const UpdateInventoryModal = ({
   open,
@@ -48,6 +50,7 @@ export const UpdateInventoryModal = ({
 
   const [loading, setLoading] = useState(false);
   const { categories } = useCategory();
+  const { userData } = useUser();
   const [imagePreview, setImagePreview] = useState<string | null>(inventoryItem.productImageUrl || null);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -59,7 +62,11 @@ export const UpdateInventoryModal = ({
         restockQuantity: data.restockQuantity || 0,
         restockReason: data.restockReason || "",
       };
-      await updateInventory(updatedData, imageFile);
+      if (userData) {
+        await updateInventory(updatedData, imageFile, userData);
+      } else {
+        toast.error("User data is missing. Please try again.");
+      }
       reset();
       setImageFile(null);
       setImagePreview(null);
