@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import {
   Input,
-  Button, Spinner
+  Button,
 } from "@/components/ui";
 import { toast } from 'react-toastify';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
@@ -21,6 +21,7 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { ref as dbRef, update } from 'firebase/database';
 import { Camera } from 'lucide-react';
 import { useEffect } from 'react';
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const InfoCard = () => {
   const { userData, loading } = useUser();
@@ -31,7 +32,6 @@ export const InfoCard = () => {
       email: '',
     },
   });
-
 
   useEffect(() => {
     if (!loading && userData) {
@@ -80,8 +80,37 @@ export const InfoCard = () => {
     }
   };
 
-  // Show spinner until userData is loaded
-  if (loading || !userData) return <Spinner />;
+  if (loading || !userData) {
+    return (
+      <Card className="max-w-lg p-4 my-4">
+        <CardHeader>
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="h-4 w-64 mt-2" />
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col my-8 items-center">
+            <Skeleton className="w-48 h-48 rounded-full" />
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <Skeleton className="h-5 w-24 mb-2" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <div>
+              <Skeleton className="h-5 w-20 mb-2" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex justify-end">
+          <Skeleton className="h-10 w-32" />
+        </CardFooter>
+      </Card>
+    );
+  }
 
   return (
     <Card className="max-w-lg p-4 my-4">
@@ -119,10 +148,9 @@ export const InfoCard = () => {
               />
             </label>
           </div>
-
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium">Full Name</label>
@@ -155,5 +183,3 @@ export const InfoCard = () => {
     </Card>
   );
 };
-
-

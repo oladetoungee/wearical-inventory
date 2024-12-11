@@ -23,10 +23,10 @@ import {
   ChevronsRight,
   ListFilterIcon,
 } from 'lucide-react';
-import { AddInventoryModal, AddCategoryModal } from './';
+import { AddInventoryModal, AddCategoryModal } from '.';
 import { DatePickerWithRange } from '@/components/ui';
 import { DateRange } from 'react-day-picker';
-import { FilterModal } from './';
+import { FilterModal } from '.';
 import { Skeleton } from "@/components/ui/skeleton"
 
 

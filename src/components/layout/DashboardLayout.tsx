@@ -17,7 +17,6 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
       '/inventory': 'Inventory',
       '/manage-sales': 'Manage Sales',
       '/employees': 'Employees',
-      '/sales-record': 'Sales Record',
       '/analytics': 'Analytics',
       '/settings': 'Settings',
     };

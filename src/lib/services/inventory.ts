@@ -2,7 +2,6 @@ import { ref, set, push, get } from 'firebase/database';
 import { db } from '../utils/firebase';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { InventoryData, UserData } from '../utils/definition';
-import { stat } from 'fs';
 
 
 
@@ -93,7 +92,6 @@ export const updateInventory = async (data: InventoryData, imageFile: File | nul
 
     await set(inventoryRef, updatedData);
 
-    // Step 4: Update the category item count if restock quantity is provided
     if (data.restockQuantity) {
       const categoryItemCountRef = ref(db, `categories/${data.category}/itemCount`);
       const categorySnapshot = await get(categoryItemCountRef);

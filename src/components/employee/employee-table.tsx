@@ -21,9 +21,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input, Button, Spinner } from '@/components/ui';
+import { Input, Button } from '@/components/ui';
 import { EmptyState } from '../layout';
 import { useUsers } from '@/lib/hooks/useEmployees';
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   MoreVertical,
   EyeIcon,
@@ -221,7 +222,15 @@ export const EmployeeTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-                {loading ? <Spinner/> : <EmptyState type="employee" />}
+              {loading ? (
+          <div className="flex justify-center">
+            {[...Array(columns.length)].map((_, index) => (
+              <Skeleton key={index} className="w-32 h-4 mx-2" />
+            ))}
+          </div>
+        ) : (
+          <EmptyState type="employee" />
+        )}
               </TableCell>
             </TableRow>
           )}

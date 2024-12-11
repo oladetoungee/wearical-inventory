@@ -16,11 +16,9 @@ export const signUp = async (email: string, password: string, fullName: string) 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Set the token in a cookie
     const token = await user.getIdToken();
     setCookie(null, "token", token, { maxAge: 30 * 24 * 60 * 60, path: "/" });
 
-    // Save user details to Realtime Database
     await set(ref(db, `users/${user.uid}`), {
       email: user.email,
       uid: user.uid,
@@ -41,19 +39,18 @@ export const signIn = async (email: string, password: string) => {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
 
-  // Set the token in a cookie after successful sign-in
-  const token = await user.getIdToken(); // Get the Firebase ID token
+  const token = await user.getIdToken(); 
   setCookie(null, 'token', token, {
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60, 
     path: '/',
   });
-  return user; // Return user information if needed
+  return user; 
 };
 
 // Function to log out a user
 export const logOut = async () => {
-  await signOut(auth); // Sign out from Firebase
-  destroyCookie(null, 'token'); // Remove the token cookie
+  await signOut(auth);
+  destroyCookie(null, 'token'); 
 };
 
 // Function to update user password
@@ -65,7 +62,6 @@ export const updateUserPassword = async (currentPassword: any, newPassword: any)
       throw new Error('No user is currently signed in.');
     }
 
-    // Determine the provider
     const providerData = user.providerData[0];
     const providerId = providerData.providerId;
 
@@ -94,6 +90,6 @@ export const updateUserPassword = async (currentPassword: any, newPassword: any)
     } else {
       console.log(`Error updating password: ${error.message}`);
     }
-    throw error; // Propagate the error
+    throw error; 
   }
 };

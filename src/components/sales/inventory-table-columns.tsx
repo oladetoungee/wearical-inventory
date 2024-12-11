@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { EyeIcon, EditIcon, DeleteIcon, MoreVertical } from 'lucide-react';
-import {ViewModal, DeleteModal, UpdateInventoryModal} from './';
+import {ViewModal, DeleteModal, UpdateInventoryModal} from '.';
 
 
 export const columns: ColumnDef<InventoryData>[] = [
