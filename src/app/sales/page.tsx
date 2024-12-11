@@ -1,11 +1,12 @@
 import { DashboardLayout } from '@/components/layout';
- import {InventoryTable } from '@/components/inventory';
+ import {SalesTable } from '@/components/sales';
 
 
 export default function EmployeePage() {
   return (
     <DashboardLayout>
-    <InventoryTable  />
+      <h1>Sales</h1>
+    {/* <SalesTable  /> */}
   </DashboardLayout>
   );
 }

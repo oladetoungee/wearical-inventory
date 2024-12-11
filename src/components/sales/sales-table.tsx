@@ -15,7 +15,7 @@ import {
   TableCell,
 } from '@/components/ui';
 import { Input, Button } from '@/components/ui';
-import { columns } from './inventory-table-columns';
+import { columns } from './sales-table-columns';
 import { EmptyState } from '../layout';
 import { useInventory } from '@/lib/hooks';
 import {
@@ -30,7 +30,7 @@ import { FilterModal } from '.';
 import { Skeleton } from "@/components/ui/skeleton"
 
 
-export const InventoryTable = () => {
+export const SalesTable = () => {
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);

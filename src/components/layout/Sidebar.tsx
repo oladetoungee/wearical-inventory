@@ -23,7 +23,7 @@ interface SidebarProps {
 const navItems: NavItem[] = [
     { name: 'Dashboard', path: '/', icon: <LayoutPanelLeft className="w-5 h-5" /> },
     { name: 'Inventory', path: '/inventory', icon: <CalendarCheck2 className="w-5 h-5" /> },
-    { name: 'Manage Sales', path: '/manage-sales', icon: <ClipboardList className="w-5 h-5" /> },
+    { name: 'Manage Sales', path: '/sales', icon: <ClipboardList className="w-5 h-5" /> },
     { name: 'Employees', path: '/employees', icon: <Users className="w-5 h-5" /> },
     { name: 'Analytics', path: '/analytics', icon: <ChartBar className="w-5 h-5" /> },
     { name: 'Settings', path: '/settings', icon: <SettingsIcon className="w-5 h-5" /> },

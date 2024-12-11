@@ -15,7 +15,7 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
     const pageMapping: { [key: string]: string } = {
       '/': 'Dashboard',
       '/inventory': 'Inventory',
-      '/manage-sales': 'Manage Sales',
+      '/sales': 'Sales',
       '/employees': 'Employees',
       '/analytics': 'Analytics',
       '/settings': 'Settings',
