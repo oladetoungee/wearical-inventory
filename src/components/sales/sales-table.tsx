@@ -25,27 +25,47 @@ import {
 } from 'lucide-react';
 import { DatePickerWithRange } from '@/components/ui';
 import { DateRange } from 'react-day-picker';
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 import { AddSaleModal } from '.';
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export const SalesTable = () => {
-
   const [isAddSalesModalOpen, setIsAddSalesModalOpen] = useState(false);
-
-
   const [search, setSearch] = useState('');
-
   const [dateFilter, setDateFilter] = useState<[Date | null, Date | null]>([null, null]);
-
-
+  const [locationFilter, setLocationFilter] = useState<string | null>(null);
 
   const { sales, loading, error } = useSales();
 
+  // Filtered sales data based on search, location, and date range
+  const filteredSales = useMemo(() => {
+    return sales.filter((sale) => {
+      const matchesSearch = search
+        ? sale.product.name.toLowerCase().includes(search.toLowerCase()) ||
+          sale.product.category.toLowerCase().includes(search.toLowerCase())
+        : true;
 
+      const matchesLocation = locationFilter
+        ? sale.location === locationFilter
+        : true;
+
+      const matchesDateRange =
+        dateFilter[0] && dateFilter[1]
+          ? new Date(sale.dateCreated) >= dateFilter[0] &&
+            new Date(sale.dateCreated) <= dateFilter[1]
+          : true;
+
+      return matchesSearch && matchesLocation && matchesDateRange;
+    });
+  }, [sales, search, locationFilter, dateFilter]);
 
   const table = useReactTable({
-    data: sales,
+    data: filteredSales,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -59,12 +79,11 @@ export const SalesTable = () => {
     }
   };
 
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Input
-          placeholder="Search saless..."
+          placeholder="Search sales..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"
@@ -77,16 +96,27 @@ export const SalesTable = () => {
             }}
             onChange={handleDateChange}
           />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center px-2 py-1">
+                <ListFilterIcon className="mr-2 h-4 w-4" />
+                <span>{locationFilter || 'Location'}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setLocationFilter(null)}>
+                All Locations
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLocationFilter('Online')}>
+                Online
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLocationFilter('Store')}>
+                Store
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button
-
             variant="outline"
-            className="flex items-center px-2 py-1"
-          >
-            <ListFilterIcon className="mr-2 h-4 w-4" />
-            <span>Location</span>
-          </Button>
-          <Button
-            variant='outline'
             className="bg-primary text-white"
           >
             Export
@@ -150,9 +180,7 @@ export const SalesTable = () => {
         </Button>
       </div>
 
-
       <AddSaleModal open={isAddSalesModalOpen} onOpenChange={setIsAddSalesModalOpen} />
-
     </div>
   );
 };

@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { EyeIcon, DeleteIcon, MoreVertical } from 'lucide-react';
-import {ViewSaleModal, DeleteSaleModal, UpdateInventoryModal} from '.';
+import {ViewSaleModal, DeleteSaleModal} from '.';
 
 
 export const columns: ColumnDef<SalesData>[] = [

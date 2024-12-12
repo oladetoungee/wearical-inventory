@@ -66,7 +66,7 @@ export const AddSaleModal = ({
   const [saleDate, setSaleDate] = useState<string>("");
   const totalSellingPrice = selectedProduct ? selectedProduct.sellingPrice * quantity : 0;
 
-  // Reshape the inventory data to match SalesProduct type
+
   const products = inventory.map((item) => ({
     id: item.id,
     name: item.name,
