@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { formatDate } from '@/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
-import { InventoryData, STATUS_COLORS } from '@/lib/utils';
+import { SalesData, STATUS_COLORS } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import {
   DropdownMenu,
@@ -15,7 +15,7 @@ import { EyeIcon, EditIcon, DeleteIcon, MoreVertical } from 'lucide-react';
 import {ViewModal, DeleteModal, UpdateInventoryModal} from '.';
 
 
-export const columns: ColumnDef<InventoryData>[] = [
+export const columns: ColumnDef<SalesData>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -27,19 +27,11 @@ export const columns: ColumnDef<InventoryData>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <Avatar>
-            <AvatarFallback>{row.original.name[0]}</AvatarFallback>
-            <AvatarImage src={row.original.productImageUrl} alt={row.original.name} />
-          </Avatar>
-          <span>{row.original.name}</span>
+         
+          <span>{row.original.product?.name}</span>
         </div>
       );
     },
-  },
-  {
-    accessorKey: 'category',
-    header: 'Category',
-    cell: ({ row }) => row.original.category || 'N/A',
   },
   {
     accessorKey: 'quantity',
@@ -49,11 +41,34 @@ export const columns: ColumnDef<InventoryData>[] = [
   {
     accessorKey: 'price',
     header: 'Price',
-    cell: ({ row }) => `NGN${row.original.costPrice.toFixed(2)}`,
+    cell: ({ row }) => `NGN${row.original.product?.sellingPrice.toFixed(2)}`,
   },
   {
+    accessorKey: 'price',
+    header: 'Total Amount',
+    cell: ({ row }) => `NGN${row.original.totalSellingPrice.toFixed(2)}`,
+  },
+  
+  {
+    accessorKey: 'category',
+    header: 'Category',
+    cell: ({ row }) => row.original.product?.category || 'N/A',
+  },
+ {
+  accessorKey: 'createdBy',
+  header: 'Created By',
+  cell: ({ row }) => {
+    return (
+      <div className="flex items-center space-x-2">
+       
+        <span>{row.original.createdBy.fullName}</span>
+      </div>
+    );
+  },
+ },
+  {
     accessorKey: 'createdAt',
-    header: 'Date Created',
+    header: 'Date',
     cell: ({ row }) => formatDate(row.original.dateCreated),
   },
   {
@@ -61,30 +76,12 @@ export const columns: ColumnDef<InventoryData>[] = [
     header: 'Location',
     cell: ({ row }) => row.original.location || 'N/A',
   },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => {
-      const status =
-        row.original.quantity > row.original.thresholdValue
-          ? 'In Stock'
-          : row.original.quantity > 0
-          ? 'Low Stock'
-          : 'Out of Stock';
-      const statusClass = STATUS_COLORS[status];
-      return (
-        <span className={`px-2 py-1 rounded-md text-xs font-medium ${statusClass}`}>
-          {status}
-        </span>
-      );
-    },
-  },
+ 
   {
     accessorKey: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
       const [viewModalOpen, setViewModalOpen] = useState(false);
-      const [editModalOpen, setEditModalOpen] = useState(false);
       const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
       const inventoryItem = row.original;
@@ -99,9 +96,7 @@ export const columns: ColumnDef<InventoryData>[] = [
               <DropdownMenuItem onClick={() => setViewModalOpen(true)}>
                 <EyeIcon className="mr-2" /> View
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setEditModalOpen(true)}>
-                <EditIcon className="mr-2" /> Edit
-              </DropdownMenuItem>
+           
               <DropdownMenuItem onClick={() => setDeleteModalOpen(true)}>
                 <DeleteIcon className="mr-2" /> Delete
               </DropdownMenuItem>
@@ -109,7 +104,7 @@ export const columns: ColumnDef<InventoryData>[] = [
           </DropdownMenu>
 
           {/* Modals */}
-          {viewModalOpen && (
+          {/* {viewModalOpen && (
             <ViewModal
               open={viewModalOpen}
               onOpenChange={setViewModalOpen}
@@ -129,7 +124,7 @@ export const columns: ColumnDef<InventoryData>[] = [
               onOpenChange={setDeleteModalOpen}
               inventoryItem={inventoryItem}
             />
-          )}
+          )} */}
         </div>
       );
     },

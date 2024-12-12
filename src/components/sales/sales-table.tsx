@@ -17,13 +17,12 @@ import {
 import { Input, Button } from '@/components/ui';
 import { columns } from './sales-table-columns';
 import { EmptyState } from '../layout';
-import { useInventory } from '@/lib/hooks';
+import { useSales } from '@/lib/hooks';
 import {
   ChevronsLeft,
   ChevronsRight,
   ListFilterIcon,
 } from 'lucide-react';
-import { AddInventoryModal, AddCategoryModal } from '.';
 import { DatePickerWithRange } from '@/components/ui';
 import { DateRange } from 'react-day-picker';
 import { FilterModal } from '.';
@@ -31,57 +30,22 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 
 export const SalesTable = () => {
-  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
 
   const [search, setSearch] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [locationFilter, setLocationFilter] = useState<string>('all');
-  const [availabilityFilter, setAvailabilityFilter] = useState<string>('all');
+
   const [dateFilter, setDateFilter] = useState<[Date | null, Date | null]>([null, null]);
 
 
-  const [tempCategoryFilter, setTempCategoryFilter] = useState<string>(categoryFilter);
-  const [tempLocationFilter, setTempLocationFilter] = useState<string>(locationFilter);
-  const [tempAvailabilityFilter, setTempAvailabilityFilter] = useState<string>(availabilityFilter);
 
-  const { inventory, loading, error } = useInventory();
+  const { sales, loading, error } = useSales();
 
 
-  const categories = useMemo(() => {
-    if (!inventory) return [];
-    const categorySet = new Set(inventory.map((p) => p.category).filter(Boolean));
-    return Array.from(categorySet);
-  }, [inventory]);
-
-  const filteredProducts = useMemo(() => {
-    if (loading || error || !inventory) return [];
-
-    return inventory.filter((product) => {
-      const productDate = new Date(product.dateCreated);
-      const [start, end] = dateFilter;
-
-      const matchesSearch = product?.name.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-      const matchesLocation = locationFilter === 'all' || product.location === locationFilter;
-      const matchesAvailability = availabilityFilter === 'all' || product.status === availabilityFilter;
-      const matchesDate =
-        (!start || productDate >= start) &&
-        (!end || productDate <= end);
-
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesLocation &&
-        matchesAvailability &&
-        matchesDate
-      );
-    });
-  }, [inventory, search, categoryFilter, locationFilter, availabilityFilter, dateFilter, loading, error]);
 
   const table = useReactTable({
-    data: filteredProducts,
+    data: sales,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -95,25 +59,6 @@ export const SalesTable = () => {
     }
   };
 
-  const handleFilterApply = () => {
-    setCategoryFilter(tempCategoryFilter);
-    setLocationFilter(tempLocationFilter);
-    setAvailabilityFilter(tempAvailabilityFilter);
-    setIsFilterModalOpen(false);
-  };
-
-  const handleFilterCancel = () => {
-    setTempCategoryFilter(categoryFilter);
-    setTempLocationFilter(locationFilter);
-    setTempAvailabilityFilter(availabilityFilter);
-    setIsFilterModalOpen(false);
-  };
-
-  const handleFilterReset = () => {
-    setTempCategoryFilter('all');
-    setTempLocationFilter('all');
-    setTempAvailabilityFilter('all');
-  };
 
   return (
     <div className="space-y-4">
@@ -133,24 +78,24 @@ export const SalesTable = () => {
             onChange={handleDateChange}
           />
           <Button
-            onClick={() => setIsFilterModalOpen(true)}
+
             variant="outline"
             className="flex items-center px-2 py-1"
           >
             <ListFilterIcon className="mr-2 h-4 w-4" />
-            <span>Filter</span>
+            <span>Location</span>
           </Button>
           <Button
-            onClick={() => setIsAddCategoryModalOpen(true)}
+            variant='outline'
             className="bg-primary text-white"
           >
-            Add Category
+            Export
           </Button>
           <Button
             onClick={() => setIsAddProductModalOpen(true)}
             className="bg-primary text-white"
           >
-            Add Product
+            Add Sales
           </Button>
         </div>
       </div>
@@ -181,15 +126,15 @@ export const SalesTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-              {loading ? (
-          <div className="flex justify-center">
-            {[...Array(columns.length)].map((_, index) => (
-              <Skeleton key={index} className="w-32 h-4 mx-2" />
-            ))}
-          </div>
-        ) : (
-          <EmptyState type="product" />
-        )}
+                {loading ? (
+                  <div className="flex justify-center">
+                    {[...Array(columns.length)].map((_, index) => (
+                      <Skeleton key={index} className="w-32 h-4 mx-2" />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState type="sales" />
+                )}
               </TableCell>
             </TableRow>
           )}
@@ -205,22 +150,9 @@ export const SalesTable = () => {
         </Button>
       </div>
 
-      <AddCategoryModal open={isAddCategoryModalOpen} onOpenChange={setIsAddCategoryModalOpen} />
-      <AddInventoryModal open={isAddProductModalOpen} onOpenChange={setIsAddProductModalOpen} />
-      <FilterModal
-        open={isFilterModalOpen}
-        onOpenChange={setIsFilterModalOpen}
-        categories={categories}
-        tempCategoryFilter={tempCategoryFilter}
-        tempLocationFilter={tempLocationFilter}
-        tempAvailabilityFilter={tempAvailabilityFilter}
-        setTempCategoryFilter={setTempCategoryFilter}
-        setTempLocationFilter={setTempLocationFilter}
-        setTempAvailabilityFilter={setTempAvailabilityFilter}
-        onApply={handleFilterApply}
-        onCancel={handleFilterCancel}
-        onReset={handleFilterReset}
-      />
+
+      {/* <AddSalesModal open={isAddProductModalOpen} onOpenChange={setIsAddProductModalOpen} /> */}
+
     </div>
   );
 };
