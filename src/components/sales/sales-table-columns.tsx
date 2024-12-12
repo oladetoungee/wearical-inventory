@@ -3,16 +3,15 @@
 import { useState } from 'react';
 import { formatDate } from '@/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
-import { SalesData, STATUS_COLORS } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import { SalesData } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { EyeIcon, EditIcon, DeleteIcon, MoreVertical } from 'lucide-react';
-import {ViewModal, DeleteModal, UpdateInventoryModal} from '.';
+import { EyeIcon, DeleteIcon, MoreVertical } from 'lucide-react';
+import {ViewSaleModal, DeleteSaleModal, UpdateInventoryModal} from '.';
 
 
 export const columns: ColumnDef<SalesData>[] = [
@@ -44,7 +43,7 @@ export const columns: ColumnDef<SalesData>[] = [
     cell: ({ row }) => `NGN${row.original.product?.sellingPrice.toFixed(2)}`,
   },
   {
-    accessorKey: 'price',
+    accessorKey: 'amount',
     header: 'Total Amount',
     cell: ({ row }) => `NGN${row.original.totalSellingPrice.toFixed(2)}`,
   },
@@ -81,10 +80,10 @@ export const columns: ColumnDef<SalesData>[] = [
     accessorKey: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const [viewModalOpen, setViewModalOpen] = useState(false);
-      const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+      const [viewSaleModalOpen, setViewSaleModalOpen] = useState(false);
+      const [deleteSaleModalOpen, setDeleteSaleModalOpen] = useState(false);
 
-      const inventoryItem = row.original;
+      const saleItem = row.original;
 
       return (
         <div className="flex items-center justify-end">
@@ -93,38 +92,32 @@ export const columns: ColumnDef<SalesData>[] = [
               <MoreVertical className="cursor-pointer" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setViewModalOpen(true)}>
+              <DropdownMenuItem onClick={() => setViewSaleModalOpen(true)}>
                 <EyeIcon className="mr-2" /> View
               </DropdownMenuItem>
            
-              <DropdownMenuItem onClick={() => setDeleteModalOpen(true)}>
+              <DropdownMenuItem onClick={() => setDeleteSaleModalOpen(true)}>
                 <DeleteIcon className="mr-2" /> Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Modals */}
-          {/* {viewModalOpen && (
-            <ViewModal
-              open={viewModalOpen}
-              onOpenChange={setViewModalOpen}
-              inventoryItem={inventoryItem}
+
+          {viewSaleModalOpen && (
+            <ViewSaleModal
+              open={viewSaleModalOpen}
+              onOpenChange={setViewSaleModalOpen}
+              sale={saleItem}
             />
           )}
-          {editModalOpen && (
-            <UpdateInventoryModal
-              open={editModalOpen}
-              onOpenChange={setEditModalOpen}
-              inventoryItem={inventoryItem}
+       
+          {deleteSaleModalOpen && (
+            <DeleteSaleModal
+              open={deleteSaleModalOpen}
+              onOpenChange={setDeleteSaleModalOpen}
+              sale={saleItem}
             />
           )}
-          {deleteModalOpen && (
-            <DeleteModal
-              open={deleteModalOpen}
-              onOpenChange={setDeleteModalOpen}
-              inventoryItem={inventoryItem}
-            />
-          )} */}
         </div>
       );
     },

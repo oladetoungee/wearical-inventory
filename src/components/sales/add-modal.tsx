@@ -1,6 +1,6 @@
-'use client';
 
-import React, { useState } from "react";
+'use client';
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Dialog,
@@ -19,16 +19,13 @@ import {
   SelectValue,
 } from "@/components/ui";
 import { toast } from 'react-toastify';
-import { addInventory } from '@/lib/services/inventory';
-import { InventoryData } from '@/lib/utils';
-import { useCategory } from '@/lib/hooks';
-import { Camera } from 'lucide-react';
-import { Checkbox } from "@/components/ui";
-import { handleFileChange } from "@/lib/utils/helpers";
+import { addSales } from '@/lib/services/sales';
+import { SalesData, SalesProduct } from '@/lib/utils'; 
+import { useInventory } from '@/lib/hooks';
 import { useUser } from "@/lib/hooks";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import { ca } from "date-fns/locale";
 
-export const AddInventoryModal = ({
+export const AddSaleModal = ({
   open,
   onOpenChange,
 }: {
@@ -39,33 +36,93 @@ export const AddInventoryModal = ({
     register,
     handleSubmit,
     control,
+    setValue,
     reset,
     formState: { errors },
-  } = useForm<InventoryData>();
+  } = useForm<SalesData>({
+    defaultValues: {
+      product: {
+        id: "",
+        name: "",
+        category: "",
+        costPrice: 0,
+        sellingPrice: 0,
+        thresholdValue: 0,
+      },
+      quantity: 1,
+      totalCost: 0,
+      totalSellingPrice: 0,
+      totalProfit: 0,
+      location: "Online",
+    },
+  });
 
   const [loading, setLoading] = useState(false);
-  const { categories } = useCategory();
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null); 
+  const { inventory } = useInventory(); // Use hook to fetch inventory list
   const { userData } = useUser();
+  const [selectedProduct, setSelectedProduct] = useState<SalesProduct | null>(null); 
 
-  const onSubmit = async (data: InventoryData) => {
+  const [quantity, setQuantity] = useState<number>(1);
+  const [saleDate, setSaleDate] = useState<string>("");
+  const totalSellingPrice = selectedProduct ? selectedProduct.sellingPrice * quantity : 0;
+
+  // Reshape the inventory data to match SalesProduct type
+  const products = inventory.map((item) => ({
+    id: item.id,
+    name: item.name,
+    costPrice: item.costPrice,
+    sellingPrice: item.sellingPrice,
+    thresholdValue: item.thresholdValue,
+    category: item.category,
+  }));
+
+  useEffect(() => {
+    if (selectedProduct) {
+      setValue("totalCost", selectedProduct.costPrice * quantity);
+      setValue("totalSellingPrice", totalSellingPrice);
+      setValue("totalProfit", (selectedProduct.sellingPrice - selectedProduct.costPrice) * quantity);
+    }
+  }, [selectedProduct, quantity, setValue]);
+
+  const onSubmit = async (data: SalesData) => {
     setLoading(true);
     try {
-   
-      if (userData) {
-        const result = await addInventory(data, imageFile, userData);
+      if (userData && selectedProduct) {
+        const saleData = {
+          ...data,
+          dateCreated: saleDate,
+          createdBy: {
+            uid: userData.uid,
+            email: userData.email,
+            fullName: userData.fullName,
+            avatarUrl: userData?.avatarUrl,
+          },
+          product: selectedProduct,
+          quantity: quantity,
+          deletedBy: null,
+          dateDeleted: '',
+        };
+  
+        // Add Sale to Database
+        await addSales(saleData);
+  
+        reset();
+        setQuantity(1);
+        setSelectedProduct(null);
+        onOpenChange(false);
+        toast.success(`Sale recorded successfully.`);
       } else {
-        toast.error('User data is missing. Please try again.');
+        toast.error('User data or product data is missing.');
       }
-      reset();
-      setImageFile(null);
-      setImagePreview(null);
-      onOpenChange(false);
-      toast.success(`Inventory item added successfully.`);
-    } catch (error) {
-      console.error('Error adding inventory:', error);
-      toast.error('Failed to add inventory. Please try again.');
+    } catch (error: any) {
+      console.error('Error adding sale:', error);
+  
+      // Display appropriate error message
+      if (error.message.includes('Insufficient stock')) {
+        toast.error(error.message); // Use the descriptive error from `addSales`
+      } else {
+        toast.error('Failed to record sale. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -76,220 +133,95 @@ export const AddInventoryModal = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Inventory</DialogTitle>
+          <DialogTitle>Record New Sale</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label htmlFor="image">
-                  Product Image
-                </label>
-                <div className="relative">
-                  <Avatar className="w-48 h-48">
-                    {imagePreview ? (
-                      <AvatarImage src={imagePreview} alt="Product Image" />
-                    ) : (
-                      <AvatarFallback>Image</AvatarFallback>
-                    )}
-                  </Avatar>
-                  <label
-                    htmlFor="image"
-                    className="absolute bottom-0 left-32 bg-black100 text-white p-2 rounded-full cursor-pointer"
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="product">Product</label>
+              <Controller
+                name="product"
+                control={control}
+                rules={{ required: "Product is required" }}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(value) => {
+                      const product = products.find(item => item.id === value) || null;
+                      if (product) {
+                        setSelectedProduct(product);
+                        setValue("product", product);
+                      } else {
+                        setSelectedProduct(null);
+                      }
+                    }}
+                    value={field.value?.id || ""} 
                   >
-                    <Camera size={20} />
-                    <input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleFileChange(e, setImagePreview, setImageFile)}
-                    />
-                  </label>
-                </div>
-              </div>
-              <div className="space-y-6 mt-4">
-                <p className="font-bold">Email Notification</p>
-                <div className="space-y-4">
-                  <div className="flex  justify-between">
-
-                    <div className="flex flex-col">
-                      <label>Out of Stock Email</label>
-                      <small className="text-xs text-gray-400">If the product quantity is equal to or less than the treshold value.</small>
-                    </div>
-                    <Checkbox
-                      id="outOfStockEmail"
-                      {...register("outOfStockEmail")}
-                    />
-
-                  </div>
-                  <div className="flex  justify-between">
-                    <div className="flex flex-col">
-                      <label>Low Stock Email</label>
-                      <small className="text-xs text-gray-400">If the product quantity reaches zero.</small>
-                    </div>
-
-                    <Checkbox
-                      id="lowStockEmail"
-                      {...register("lowStockEmail")}
-                    />
-
-                  </div>
-                </div>
-                <div>
-                <Controller
-                  name="emailFrequency"
-                  control={control}
-                  rules={{ required: "Email frequency is required" }}
-                  render={({ field }) => (
-                    <>
-                      <label htmlFor="" className="my-1">Alert Frequency</label>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Email Frequency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Daily">Daily</SelectItem>
-                          <SelectItem value="Weekly">Weekly</SelectItem>
-                          <SelectItem value="Monthly">Monthly</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </>
-
-                  )}
-                />
-                {errors.emailFrequency && (
-                  <p className="text-sm text-red-500">{errors.emailFrequency.message}</p>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products.map((product) => (
+                        <SelectItem key={product.id} value={product.id || ""}>
+                          {product.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
-                </div>
-             
-              </div>
+              />
+              {errors.product && <p className="text-sm text-red-500">{errors.product.message}</p>}
             </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="name">
-                  Item Name
-                </label>
-                <Input
-                  id="name"
-                  placeholder="Enter item name"
-                  {...register("name", { required: "Item name is required" })}
-                />
-                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-              </div>
 
-              <div className="space-y-2">
-                <label htmlFor="category">
-                  Category
-                </label>
-                <Controller
-                  name="category"
-                  control={control}
-                  rules={{ required: "Category is required" }}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.name}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.category && <p className="text-sm text-red-500">{errors.category.message}</p>}
-              </div>
+            <div>
+              <label htmlFor="quantity">Quantity</label>
+              <Input
+                id="quantity"
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
+                placeholder="Enter quantity"
+              />
+              {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
+            </div>
+            <div>
+              <label htmlFor="totalSellingPrice">Total Price</label>
+              <Input
+                id="totalSellingPrice"
+                value={totalSellingPrice}
+                readOnly
+                placeholder="Auto calculated"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <label htmlFor="description">
-                  Description
-                </label>
-                <Input
-                  id="description"
-                  placeholder="Enter item description"
-                  {...register("description", { required: "Description is required" })}
-                />
-                {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
-              </div>
+            <div>
+              <label htmlFor="saleDate">Sale Date</label>
+              <Input
+                id="saleDate"
+                type="date"
+                value={saleDate}
+                onChange={(e) => setSaleDate(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <label htmlFor="quantity">
-                  Quantity
-                </label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  placeholder="Enter item quantity"
-                  {...register("quantity", { required: "Quantity is required", valueAsNumber: true })}
-                />
-                {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="costPrice">
-                  Cost Price
-                </label>
-                <Input
-                  id="costPrice"
-                  type="number"
-                  placeholder="Enter item cost price"
-                  {...register("costPrice", { required: "Cost price is required", valueAsNumber: true })}
-                />
-                {errors.costPrice && <p className="text-sm text-red-500">{errors.costPrice.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="sellingPrice">
-                  Selling Price
-                </label>
-                <Input
-                  id="sellingPrice"
-                  type="number"
-                  placeholder="Enter item selling price"
-                  {...register("sellingPrice", { required: "Selling price is required", valueAsNumber: true })}
-                />
-                {errors.sellingPrice && <p className="text-sm text-red-500">{errors.sellingPrice.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="thresholdValue">
-                  Threshold Value
-                </label>
-                <Input
-                  id="thresholdValue"
-                  type="number"
-                  placeholder="Enter threshold value"
-                  {...register("thresholdValue", { required: "Threshold value is required", valueAsNumber: true })}
-                />
-                {errors.thresholdValue && <p className="text-sm text-red-500">{errors.thresholdValue.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="location">
-                  Location
-                </label>
-                <Controller
-                  name="location"
-                  control={control}
-                  rules={{ required: "Location is required" }}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Location" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Online">Online</SelectItem>
-                        <SelectItem value="Store">Store</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.location && <p className="text-sm text-red-500">{errors.location.message}</p>}
-              </div>
+            <div>
+              <label htmlFor="location">Location</label>
+              <Controller
+                name="location"
+                control={control}
+                rules={{ required: "Location is required" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Online">Online</SelectItem>
+                      <SelectItem value="Store">Store</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.location && <p className="text-sm text-red-500">{errors.location.message}</p>}
             </div>
           </div>
 
@@ -298,7 +230,7 @@ export const AddInventoryModal = ({
               Cancel
             </Button>
             <Button type="submit" className="bg-primary text-white" disabled={loading}>
-              {loading ? "Adding..." : "Add Inventory"}
+              {loading ? "Recording..." : "Record Sale"}
             </Button>
           </DialogFooter>
         </form>

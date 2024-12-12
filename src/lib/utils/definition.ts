@@ -56,22 +56,24 @@ export interface InventoryData {
   restockQuantity?: number;
   restockReason?: string;
 }
+
+export interface SalesProduct {
+  id: string | undefined;
+  name: string;
+  category: string;
+  costPrice: number;
+  sellingPrice: number;
+  thresholdValue: number;
+};
 export interface SalesData {
   id: string;
-  product: {
-    id: string;
-    name: string;
-    category: string;
-    costPrice: number;
-    sellingPrice: number;
-    thresholdValue: number;
-    quantity: number;
-  };
+  product: SalesProduct;
   dateCreated: string;
   createdBy: {
     uid: string;
     email: string;
     fullName: string;
+    avatarUrl?: string;
   };
   quantity: number;
   totalCost: number;

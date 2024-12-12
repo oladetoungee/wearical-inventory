@@ -2,65 +2,47 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { InventoryData, STATUS_COLORS } from '@/lib/utils';
+import { SalesData } from '@/lib/utils';
 import { formatDate } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 
-interface ViewModalProps {
+interface ViewSaleModalProps {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  inventoryItem: InventoryData;
+  sale: SalesData;
 }
 
-export const ViewModal = ({ open, onOpenChange, inventoryItem }: ViewModalProps) => {
-  const status =
-    inventoryItem.quantity > inventoryItem.thresholdValue
-      ? 'In Stock'
-      : inventoryItem.quantity > 0
-        ? 'Low Stock'
-        : 'Out of Stock';
-
-
-  const statusClass = STATUS_COLORS[status];
-
+export const ViewSaleModal = ({ open, onOpenChange, sale }: ViewSaleModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Product Details</DialogTitle>
+          <DialogTitle>Sale Details</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4  text-center">
+        <div className="space-y-4 text-center">
           <Avatar className="w-full h-48 mx-auto rounded overflow-hidden">
             <AvatarImage
-              src={inventoryItem.productImageUrl || undefined}
-              alt={inventoryItem.name || 'N/A'}
+              src={sale.createdBy?.avatarUrl || undefined}
+              alt={sale.product.name || 'N/A'}
               className="w-full h-full object-cover"
             />
-            <AvatarFallback className="text-lg">{inventoryItem.name ? inventoryItem.name[0] : 'N/A'}</AvatarFallback>
+            <AvatarFallback className="text-lg">
+              {sale.createdBy.fullName ? sale.createdBy.fullName[0] : 'N/A'}
+            </AvatarFallback>
           </Avatar>
-        </div>
-
-
-        <div className="space-y-4">
-          <DetailRow name="Name" value={inventoryItem.name} />
-          <DetailRow name="Category" value={inventoryItem.category} />
-          <DetailRow name="Description" value={inventoryItem.description} />
-          <DetailRow name="Quantity" value={`${inventoryItem.quantity} pcs`} />
-          <DetailRow name="Cost Price" value={`NGN ${inventoryItem.costPrice.toFixed(2)}`} />
-          <DetailRow name="Selling Price" value={`NGN ${inventoryItem.sellingPrice.toFixed(2)}`} />
-          <DetailRow name="Threshold Value" value={inventoryItem.thresholdValue} />
-          <DetailRow name="Date Created" value={formatDate(inventoryItem.dateCreated)} />
-          <DetailRow name="Date Updated" value={formatDate(inventoryItem.dateUpdated)} />
-          <DetailRow name="Location" value={inventoryItem.location} />
-          <div className="flex justify-between text-sm text-black100">
-            <p>Status</p>
-            <span className={`px-2 py-1 rounded-md text-xs font-medium ${statusClass}`}>
-              {status}
-            </span>
+          <div>
+            <h2 className="text-lg font-semibold">{sale.createdBy?.fullName || 'N/A'}</h2>
+            <p className="text-sm text-gray-500">Creator</p>
           </div>
         </div>
 
-
+        <div className="space-y-4">
+          <DetailRow name="Product" value={sale.product.name} />
+          <DetailRow name="Quantity Sold" value={`${sale.quantity} pcs`} />
+          <DetailRow name="Price" value={`NGN ${sale.totalSellingPrice.toFixed(2)}`} />
+          <DetailRow name="Date of Sale" value={formatDate(sale.dateCreated)} />
+          <DetailRow name="Location" value={sale.location} />
+        </div>
       </DialogContent>
     </Dialog>
   );

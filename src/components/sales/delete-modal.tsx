@@ -4,28 +4,27 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui';
 import { toast } from 'react-toastify';
-import { deleteInventory } from '@/lib/services/inventory';
-import { InventoryData } from '@/lib/utils';
+import { deleteSale } from '@/lib/services/sales';
+import { SalesData } from '@/lib/utils';
 
-interface DeleteModalProps {
+interface DeleteSaleModalProps {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  inventoryItem: InventoryData;
-
+  sale: SalesData;
 }
 
-export const DeleteModal = ({ open, onOpenChange, inventoryItem }: DeleteModalProps) => {
+export const DeleteSaleModal = ({ open, onOpenChange, sale }: DeleteSaleModalProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
     setLoading(true);
     try {
-      await deleteInventory(inventoryItem);
+      await deleteSale(sale);
       onOpenChange(false);
-      toast.success("Item deleted successfully.");
+      toast.success(`Sale for ${sale.product.name} deleted successfully.`);
     } catch (error) {
-      console.error("Error deleting item:", error);
-      toast.error("Failed to delete item. Please try again.");
+      console.error('Error deleting sale:', error);
+      toast.error('Failed to delete sale. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -35,15 +34,18 @@ export const DeleteModal = ({ open, onOpenChange, inventoryItem }: DeleteModalPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Inventory Item</DialogTitle>
+          <DialogTitle>Delete Sale</DialogTitle>
         </DialogHeader>
-        <p>Are you sure you want to delete <strong>{inventoryItem.name}</strong>?</p>
+        <p>
+          Are you sure you want to delete the sale for <strong>{sale.product.name}</strong> recorded on{' '}
+          <strong>{new Date(sale.dateCreated).toLocaleDateString()}</strong>?
+        </p>
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={loading}>
             Cancel
           </Button>
           <Button onClick={handleDelete} className="bg-red-500 text-white" disabled={loading}>
-            {loading ? "Deleting..." : "Delete"}
+            {loading ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>

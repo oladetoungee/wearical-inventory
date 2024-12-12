@@ -25,13 +25,13 @@ import {
 } from 'lucide-react';
 import { DatePickerWithRange } from '@/components/ui';
 import { DateRange } from 'react-day-picker';
-import { FilterModal } from '.';
 import { Skeleton } from "@/components/ui/skeleton"
+import { AddSaleModal } from '.';
 
 
 export const SalesTable = () => {
 
-  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [isAddSalesModalOpen, setIsAddSalesModalOpen] = useState(false);
 
 
   const [search, setSearch] = useState('');
@@ -64,7 +64,7 @@ export const SalesTable = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Input
-          placeholder="Search products..."
+          placeholder="Search saless..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"
@@ -92,7 +92,7 @@ export const SalesTable = () => {
             Export
           </Button>
           <Button
-            onClick={() => setIsAddProductModalOpen(true)}
+            onClick={() => setIsAddSalesModalOpen(true)}
             className="bg-primary text-white"
           >
             Add Sales
@@ -151,7 +151,7 @@ export const SalesTable = () => {
       </div>
 
 
-      {/* <AddSalesModal open={isAddProductModalOpen} onOpenChange={setIsAddProductModalOpen} /> */}
+      <AddSaleModal open={isAddSalesModalOpen} onOpenChange={setIsAddSalesModalOpen} />
 
     </div>
   );
