@@ -1,5 +1,5 @@
 import { DashboardLayout } from '@/components/layout';
- import { ChartLine, ChartBar } from '@/components/ui';
+ import { ChartLine, ChartBar, DonutChart  } from '@/components/ui';
 import { DashboardHome } from '@/components/dashboard';
 export default function EmployeePage() {
   return (
@@ -7,6 +7,7 @@ export default function EmployeePage() {
         <DashboardHome />
 <ChartLine />
 <ChartBar />
+<DonutChart />
   </DashboardLayout>
   );
 }
