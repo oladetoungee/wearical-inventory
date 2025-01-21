@@ -6,6 +6,7 @@ export default function EmployeePage() {
   return (
     <DashboardLayout>
     <InventoryTable  />
+
   </DashboardLayout>
   );
 }

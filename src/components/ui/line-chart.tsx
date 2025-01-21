@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 
 import {
@@ -16,6 +17,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
 
 const chartData = [
   { month: "January", online: 186, store: 80 },
@@ -32,7 +39,6 @@ const chartData = [
   { month: "December", online: 240, store: 190 },
 ]
 
-
 const chartConfig: ChartConfig = {
   online: {
     label: "Online",
@@ -43,23 +49,33 @@ const chartConfig: ChartConfig = {
     color: "bg-purple100",
   },
 }
-const currentYear = new Date().getFullYear();
+
+const currentYear = new Date().getFullYear()
 
 const CustomizedLegend = () => (
-    <div className="flex justify-center space-x-4 mt-2">
-      <div className="flex items-center space-x-2">
-        <span className="w-3 h-3 bg-green100 rounded-sm"></span>
-        <span>Online</span>
-      </div>
-      <div className="flex items-center space-x-2">
-        <span className="w-3 h-3 bg-purple100 rounded-sm"></span>
-        <span>Store</span>
-      </div>
+  <div className="flex justify-center space-x-4 mt-2">
+    <div className="flex items-center space-x-2">
+      <span className="w-3 h-3 bg-green100 rounded-sm"></span>
+      <span>Online</span>
     </div>
-  )
-  
+    <div className="flex items-center space-x-2">
+      <span className="w-3 h-3 bg-purple100 rounded-sm"></span>
+      <span>Store</span>
+    </div>
+  </div>
+)
 
 export function ChartLine() {
+  const [selectedMonth, setSelectedMonth] = useState<string>("All")
+
+  const filteredData =
+    selectedMonth === "All"
+      ? chartData
+      : [
+          chartData.find((data) => data.month === selectedMonth),
+          chartData.find((data) => data.month === selectedMonth),
+        ].filter(Boolean)
+
   return (
     <Card>
       <CardHeader>
@@ -67,10 +83,33 @@ export function ChartLine() {
         <CardDescription>January - December {currentYear}</CardDescription>
       </CardHeader>
       <CardContent>
-
+        <div className="flex justify-end mb-4">
+          <div className="w-48">
+            <Select
+              onValueChange={(value) => setSelectedMonth(value)}
+              value={selectedMonth}
+            >
+              <SelectTrigger className="w-full">
+                <span>
+                  {selectedMonth === "All"
+                    ? "Select Month"
+                    : `Month: ${selectedMonth}`}
+                </span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Months</SelectItem>
+                {chartData.map((data) => (
+                  <SelectItem key={data.month} value={data.month}>
+                    {data.month}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <ChartContainer config={chartConfig}>
           <LineChart
-            data={chartData}
+            data={filteredData}
             margin={{
               left: 12,
               right: 12,
@@ -96,7 +135,7 @@ export function ChartLine() {
               dataKey="online"
               name="Online"
               type="monotone"
-              stroke="#00923F"  
+              stroke="#00923F"
               strokeWidth={2}
               dot={false}
             />
@@ -104,17 +143,15 @@ export function ChartLine() {
               dataKey="store"
               name="Store"
               type="monotone"
-              stroke="#7B49B9"  
+              stroke="#7B49B9"
               strokeWidth={2}
               dot={false}
             />
           </LineChart>
         </ChartContainer>
-        <CustomizedLegend /> 
+        <CustomizedLegend />
       </CardContent>
-      <CardFooter>
-     
-      </CardFooter>
+      <CardFooter></CardFooter>
     </Card>
   )
 }
