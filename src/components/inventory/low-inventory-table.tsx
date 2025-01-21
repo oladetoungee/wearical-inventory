@@ -41,7 +41,7 @@ export const LowStockTable = () => {
   });
 
   return (
-    <div className="p-4 border rounded-md shadow-md max-w-sm">
+    <div className="p-4 border rounded-md shadow-md overflow-hidden">
       <h2 className="text-lg font-semibold mb-2">Low Stock Items</h2>
 
       {loading ? (

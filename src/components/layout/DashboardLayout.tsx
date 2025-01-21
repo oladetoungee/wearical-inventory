@@ -29,15 +29,18 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   return (
-    <div className="flex h-screen">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className="flex-1 flex flex-col">
-        <Header toggleSidebar={toggleSidebar} currentPage={currentPage} />
-        <div className="flex-1 overflow-y-auto m-6">
-          <h1 className="text-primary100 text-xl font-bold p-0 m-0">{currentPage}</h1>
-          {children}
-        </div>
+<div className="flex h-screen overflow-hidden">
+  <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+  <div className="flex-1 flex flex-col overflow-hidden">
+    <Header toggleSidebar={toggleSidebar} currentPage={currentPage} />
+    <div className="flex-1 overflow-y-auto m-6 max-w-full max-h-full">
+      <h1 className="text-primary100 text-xl font-bold truncate">{currentPage}</h1>
+      <div className="max-w-full max-h-full overflow-auto">
+        {children}
       </div>
     </div>
+  </div>
+</div>
+
   );
 };

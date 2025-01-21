@@ -116,16 +116,17 @@ export const InventoryTable = () => {
   };
 
   return (
-<div className="space-y-4 w-[50%] overflow-hidden">
+    <div className="space-y-4 ">
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 p-4">
         <Input
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-64"
+          className="w-full max-w-xs md:max-w-sm lg:max-w-md"
         />
-        <div className="flex space-x-2">
+
+        <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
           <DatePickerWithRange
             value={{
               from: dateFilter[0] || undefined,
@@ -156,7 +157,8 @@ export const InventoryTable = () => {
         </div>
       </div>
 
-      <Table>
+
+      <Table >
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -182,15 +184,15 @@ export const InventoryTable = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-              {loading ? (
-          <div className="flex justify-center">
-            {[...Array(columns.length)].map((_, index) => (
-              <Skeleton key={index} className="w-32 h-4 mx-2" />
-            ))}
-          </div>
-        ) : (
-          <EmptyState type="product" />
-        )}
+                {loading ? (
+                  <div className="flex justify-center">
+                    {[...Array(columns.length)].map((_, index) => (
+                      <Skeleton key={index} className="w-32 h-4 mx-2" />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState type="product" />
+                )}
               </TableCell>
             </TableRow>
           )}

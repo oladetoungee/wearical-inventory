@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { Menu } from 'lucide-react';
-import { Breadcrumb, Spinner, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator,  Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator,  Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { useUser } from '@/lib/hooks';
 import {  ROLE_COLORS } from '@/lib/utils';
 
@@ -16,7 +16,6 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, currentPage }) => {
   
     return (
         <div className="flex items-center justify-between p-4 bg-white shadow-md">
-        {/* Breadcrumb (Visible only on medium and larger screens) */}
         <div className="flex items-center space-x-2 hidden md:block">
             <Breadcrumb>
                 <BreadcrumbList>
@@ -30,8 +29,6 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, currentPage }) => {
                 </BreadcrumbList>
             </Breadcrumb>
         </div>
-    
-        {/* User Info and Avatar */}
         <div className="flex items-center justify-between w-full md:w-auto">
             <div className="flex items-center space-x-2">
                 {/* Role (if available) */}
@@ -56,8 +53,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, currentPage }) => {
                 <Menu className="w-6 h-6" />
             </button>
         </div>
-    
-        {/* Name and Email (Visible only on small and larger screens) */}
+
         {/* <div className="hidden md:flex items-center space-x-4">
             <div className="flex flex-col items-end text-right">
                 {loading ? (

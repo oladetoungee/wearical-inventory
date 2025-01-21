@@ -5,8 +5,8 @@ import { DashboardLayout } from '@/components/layout';
 export default function EmployeePage() {
   return (
     <DashboardLayout>
-      <h1>wqw</h1>
-    {/* <InventoryTable  /> */}
+    <InventoryTable  />
+
   </DashboardLayout>
   );
 }
