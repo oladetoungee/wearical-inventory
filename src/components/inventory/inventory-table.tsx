@@ -116,7 +116,8 @@ export const InventoryTable = () => {
   };
 
   return (
-    <div className="space-y-4">
+<div className="space-y-4 w-[50%] overflow-hidden">
+
       <div className="flex items-center justify-between">
         <Input
           placeholder="Search products..."
