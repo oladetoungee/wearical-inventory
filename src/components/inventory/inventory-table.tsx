@@ -125,7 +125,6 @@ export const InventoryTable = () => {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-xs md:max-w-sm lg:max-w-md"
         />
-
         <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
           <DatePickerWithRange
             value={{
