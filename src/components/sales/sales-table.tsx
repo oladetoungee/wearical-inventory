@@ -81,14 +81,14 @@ export const SalesTable = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+  <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 p-4">
         <Input
           placeholder="Search sales..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"
         />
-        <div className="flex space-x-2">
+         <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
           <DatePickerWithRange
             value={{
               from: dateFilter[0] || undefined,

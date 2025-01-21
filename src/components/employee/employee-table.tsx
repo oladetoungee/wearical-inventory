@@ -162,14 +162,14 @@ export const EmployeeTable = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 p-4">
         <Input
           placeholder="Search employees..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"
         />
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center px-2 py-1">
               <ListFilterIcon className="mr-2 h-4 w-4" />
