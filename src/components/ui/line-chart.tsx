@@ -1,21 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import * as React from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { useMonthlySalesChart } from "@/lib/hooks/monthly"; // Ensure the correct import path
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartConfig,
 } from "@/components/ui/chart";
 import {
   Select,
@@ -24,6 +23,36 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
+// Define the shape of each data item for the line chart.
+interface LineChartDataItem {
+  month: string;
+  online: number;
+  store: number;
+}
+
+export interface LineChartUIProps {
+  /**
+   * Data for the chart, already in the shape Recharts needs.
+   * Each item must have: { month, online, store }.
+   */
+  data: LineChartDataItem[];
+
+  /**
+   * Title & description for the Card header.
+   */
+  title: string;
+  description: string;
+
+  /**
+   * An optional node or string to appear in the CardFooter, if needed.
+   */
+  footerContent?: React.ReactNode;
+}
+
+/**
+ * Example chart config for usage with ChartContainer (optional).
+ * You can adjust or remove this if you're not using ChartContainer for theming.
+ */
 const chartConfig: ChartConfig = {
   onlineSales: {
     label: "Online",
@@ -35,49 +64,56 @@ const chartConfig: ChartConfig = {
   },
 };
 
+// A simple legend component (optional).
+function CustomizedLegend() {
+  return (
+    <div className="mt-2 flex justify-center space-x-4">
+      <div className="flex items-center space-x-2">
+        <span className="h-3 w-3 rounded-sm bg-green100" />
+        <span>Online</span>
+      </div>
+      <div className="flex items-center space-x-2">
+        <span className="h-3 w-3 rounded-sm bg-purple100" />
+        <span>Store</span>
+      </div>
+    </div>
+  );
+}
+
 const currentYear = new Date().getFullYear();
 
-const CustomizedLegend = () => (
-  <div className="flex justify-center space-x-4 mt-2">
-    <div className="flex items-center space-x-2">
-      <span className="w-3 h-3 bg-green100 rounded-sm"></span>
-      <span>Online</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <span className="w-3 h-3 bg-purple100 rounded-sm"></span>
-      <span>Store</span>
-    </div>
-  </div>
-);
+/**
+ * A fully self-contained UI component for displaying
+ * a line chart with month-based filtering.
+ */
+export function LineChartUI({ data, title, description, footerContent }: LineChartUIProps) {
+  // Track the currently selected month
+  const [selectedMonth, setSelectedMonth] = React.useState<string>("All");
 
-export function ChartLine() {
-  const monthlySalesData = useMonthlySalesChart();
-  const [selectedMonth, setSelectedMonth] = useState<string>("All");
-
-  // Format data for the chart
-  const formattedChartData = monthlySalesData.map((item) => ({
-    month: item.month,
-    online: item.onlineSales,
-    store: item.storeSales,
-  }));
-
-  const filteredData =
-    selectedMonth === "All"
-      ? formattedChartData
-      : [
-          formattedChartData.find((data) => data.month === selectedMonth),
-        ].filter(Boolean);
+  // If user selects a specific month, filter data to that single item.
+  // Otherwise, show all months.
+  const filteredData = React.useMemo(() => {
+    if (selectedMonth === "All") {
+      return data;
+    }
+    const singleItem = data.find((item) => item.month === selectedMonth);
+    return singleItem ? [singleItem] : [];
+  }, [data, selectedMonth]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sales Summary</CardTitle>
-        <CardDescription>January - December {currentYear}</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>
+          {description} {currentYear}
+        </CardDescription>
       </CardHeader>
+
       <CardContent>
-        <div className="flex justify-end mb-4">
+        {/* Month selector */}
+        <div className="mb-4 flex justify-end">
           <div className="w-48">
-            <Select onValueChange={(value) => setSelectedMonth(value)} value={selectedMonth}>
+            <Select onValueChange={setSelectedMonth} value={selectedMonth}>
               <SelectTrigger className="w-full">
                 <span>
                   {selectedMonth === "All" ? "Select Month" : `Month: ${selectedMonth}`}
@@ -85,15 +121,17 @@ export function ChartLine() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Months</SelectItem>
-                {formattedChartData.map((data) => (
-                  <SelectItem key={data.month} value={data.month}>
-                    {data.month}
+                {data.map((item) => (
+                  <SelectItem key={item.month} value={item.month}>
+                    {item.month}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
         </div>
+
+        {/* The line chart */}
         <ChartContainer config={chartConfig}>
           <LineChart
             data={filteredData}
@@ -108,15 +146,9 @@ export function ChartLine() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-              label={{ value: "", position: "insideBottom", offset: -5 }}
+              tickFormatter={(value) => value.slice(0, 3)} // e.g., Jan, Feb, ...
             />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              label={{ value: "", angle: -90, position: "insideLeft" }}
-            />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Line
               dataKey="online"
@@ -136,9 +168,11 @@ export function ChartLine() {
             />
           </LineChart>
         </ChartContainer>
+
         <CustomizedLegend />
       </CardContent>
-      <CardFooter></CardFooter>
+
+      <CardFooter>{footerContent}</CardFooter>
     </Card>
   );
 }
