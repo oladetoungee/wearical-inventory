@@ -1,7 +1,7 @@
 "use client"
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
-
+import { useWeeklyDataChart } from "@/lib/hooks" // Ensure the path is correct
 import {
   Card,
   CardContent,
@@ -16,16 +16,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-
-const chartData = [
-  { day: "Monday", added: 150, sold: 80 },
-  { day: "Tuesday", added: 200, sold: 120 },
-  { day: "Wednesday", added: 180, sold: 95 },
-  { day: "Thursday", added: 220, sold: 110 },
-  { day: "Friday", added: 190, sold: 105 },
-  { day: "Saturday", added: 160, sold: 90 },
-  { day: "Sunday", added: 175, sold: 100 },
-]
 
 const chartConfig = {
   added: {
@@ -52,6 +42,15 @@ const CustomizedLegend = () => (
 )
 
 export function ChartBar() {
+  const weeklyData = useWeeklyDataChart();
+
+  // Transform data to match Recharts format
+  const formattedChartData = weeklyData.map((item) => ({
+    day: item.day,
+    added: item.productsAdded,
+    sold: item.productsSold,
+  }));
+
   return (
     <Card>
       <CardHeader>
@@ -60,7 +59,7 @@ export function ChartBar() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-        <BarChart data={chartData} barCategoryGap="20%" barSize={15}>
+          <BarChart data={formattedChartData} barCategoryGap="20%" barSize={15}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="day"
@@ -77,6 +76,7 @@ export function ChartBar() {
         <CustomizedLegend />
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
+        {/* You can add additional footer content here */}
       </CardFooter>
     </Card>
   )
