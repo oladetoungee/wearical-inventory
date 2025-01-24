@@ -91,12 +91,7 @@ export const AddSaleModal = ({
         const saleData = {
           ...data,
           dateCreated: saleDate,
-          createdBy: {
-            uid: userData.uid,
-            email: userData.email,
-            fullName: userData.fullName,
-            avatarUrl: userData?.avatarUrl,
-          },
+          createdBy: userData.uid,
           product: selectedProduct,
           quantity: quantity,
           deletedBy: null,

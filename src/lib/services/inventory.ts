@@ -24,11 +24,7 @@ export const addInventory = async (data: InventoryData, imageFile: File | null, 
       dateCreated: new Date().toISOString(),
       dateUpdated: new Date().toISOString(),
       id: newInventoryRef.key,
-      createdBy: {
-        uid: user?.uid || '',
-        email: user?.email || '',
-        fullName: user?.fullName || '',
-      },
+      createdBy: user?.uid ,
       status: data.quantity > data.thresholdValue ? 'In Stock' : data.quantity > 0 ? 'Low Stock' : 'Out of Stock',
     });
 

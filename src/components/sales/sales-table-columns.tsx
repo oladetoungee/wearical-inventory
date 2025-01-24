@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { EyeIcon, DeleteIcon, MoreVertical } from 'lucide-react';
 import {ViewSaleModal, DeleteSaleModal} from '.';
+import { useUserName } from '@/lib/hooks';
 
 
 export const columns: ColumnDef<SalesData>[] = [
@@ -53,18 +54,18 @@ export const columns: ColumnDef<SalesData>[] = [
     header: 'Category',
     cell: ({ row }) => row.original.product?.category || 'N/A',
   },
- {
-  accessorKey: 'createdBy',
-  header: 'Created By',
-  cell: ({ row }) => {
-    return (
-      <div className="flex items-center space-x-2">
-       
-        <span>{row.original.createdBy.fullName}</span>
-      </div>
-    );
+  {
+    accessorKey: 'createdBy',
+    header: 'Created By',
+    cell: ({ row }) => {
+      const userName = useUserName(row.original.createdBy);
+      return (
+        <div className="flex items-center space-x-2">
+          <span>{userName}</span>
+        </div>
+      );
+    },
   },
- },
   {
     accessorKey: 'createdAt',
     header: 'Date',

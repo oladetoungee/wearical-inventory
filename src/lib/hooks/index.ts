@@ -5,3 +5,4 @@ export * from './useInventory';
 export * from './useCategory';
 export * from './useSales';
 export * from './weekly';
+export * from './userName';
