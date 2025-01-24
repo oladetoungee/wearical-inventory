@@ -4,7 +4,8 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { SalesData } from '@/lib/utils';
 import { formatDate } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import { useUserName } from '@/lib/hooks';
+
 
 interface ViewSaleModalProps {
   open: boolean;
@@ -20,18 +21,18 @@ export const ViewSaleModal = ({ open, onOpenChange, sale }: ViewSaleModalProps) 
           <DialogTitle>Sale Details</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 text-center">
-          <Avatar className="w-full h-48 mx-auto rounded overflow-hidden">
+          {/* <Avatar className="w-full h-48 mx-auto rounded overflow-hidden">
             <AvatarImage
               src={sale.createdBy?.avatarUrl || undefined}
               alt={sale.product.name || 'N/A'}
               className="w-full h-full object-cover"
             />
             <AvatarFallback className="text-lg">
-              {sale.createdBy.fullName ? sale.createdBy.fullName[0] : 'N/A'}
+              {sale.createdBy ? sale.createdBy[0] : 'N/A'}
             </AvatarFallback>
-          </Avatar>
+          </Avatar> */}
           <div>
-            <h2 className="text-lg font-semibold">{sale.createdBy?.fullName || 'N/A'}</h2>
+            <h2 className="text-lg font-semibold">{useUserName(sale.createdBy) || 'N/A'}</h2>
             <p className="text-sm text-gray-500">Creator</p>
           </div>
         </div>

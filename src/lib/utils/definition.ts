@@ -69,13 +69,8 @@ export interface SalesData {
   id: string;
   product: SalesProduct;
   dateCreated: string;
-  createdBy: {
-    uid: string;
-    email: string;
-    fullName: string;
-    avatarUrl?: string;
-  };
-  quantity: number;
+  createdBy: string;
+    quantity: number;
   totalCost: number;
   totalSellingPrice: number;
   totalProfit: number;
