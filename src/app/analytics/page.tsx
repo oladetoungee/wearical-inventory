@@ -1,5 +1,5 @@
 import { DashboardLayout } from '@/components/layout';
-import { ChartLine, ChartBar, DonutChart } from '@/components/ui';
+import { StockChart, WeeklyChart, MonthlySalesChart } from '@/components/analytics';
 import { DashboardHome } from '@/components/dashboard';
 import { LowStockTable } from '@/components/inventory';
 
@@ -10,7 +10,7 @@ export default function AnalyticsPage() {
         <div className="col-span-full">
           <DashboardHome />
         </div>
-        {[<ChartLine />, <ChartBar />, <DonutChart />, <LowStockTable />].map((Component, index) => (
+        {[<MonthlySalesChart />, <WeeklyChart />, <StockChart />, <LowStockTable />].map((Component, index) => (
           <div key={index} className="lg:col-span-1">
             {Component}
           </div>

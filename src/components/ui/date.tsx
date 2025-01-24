@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -52,7 +52,7 @@ export function DatePickerWithRange({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-4 space-y-2" align="start">
           <Calendar
             initialFocus
             mode="range"
@@ -61,6 +61,15 @@ export function DatePickerWithRange({
             onSelect={onChange}
             numberOfMonths={2}
           />
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => onChange?.(undefined)}
+              className="text-sm"
+            >
+              Clear
+            </Button>
+          </div>
         </PopoverContent>
       </Popover>
     </div>
