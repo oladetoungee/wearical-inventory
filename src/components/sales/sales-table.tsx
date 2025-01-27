@@ -43,12 +43,12 @@ export const SalesTable = () => {
 
   const { sales, loading } = useSales();
 
-  // Filtered sales data based on search, location, and date range
+
   const filteredSales = useMemo(() => {
     return sales.filter((sale) => {
       const matchesSearch = search
         ? sale.product.name.toLowerCase().includes(search.toLowerCase()) ||
-          sale.product.category.toLowerCase().includes(search.toLowerCase())
+        sale.product.category.toLowerCase().includes(search.toLowerCase())
         : true;
 
       const matchesLocation = locationFilter
@@ -58,7 +58,7 @@ export const SalesTable = () => {
       const matchesDateRange =
         dateFilter[0] && dateFilter[1]
           ? new Date(sale.dateCreated) >= dateFilter[0] &&
-            new Date(sale.dateCreated) <= dateFilter[1]
+          new Date(sale.dateCreated) <= dateFilter[1]
           : true;
 
       return matchesSearch && matchesLocation && matchesDateRange;
@@ -72,6 +72,13 @@ export const SalesTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const csvData = useMemo(() => {
+    return filteredSales.map(({ id, product, ...rest }) => ({
+      ...rest,
+      product: product?.name || 'N/A',
+    }));
+  }, [filteredSales]);
+
   const handleDateChange = (value: DateRange | undefined) => {
     if (!value) {
       setDateFilter([null, null]);
@@ -80,10 +87,6 @@ export const SalesTable = () => {
     }
   };
 
-  const csvHeaders = columns.map((col) => ({
-    label: col.header,
-    key: col.accessorKey,
-  }));
 
   return (
     <div className="space-y-4">
@@ -122,12 +125,10 @@ export const SalesTable = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <CSVLink
-            data={filteredSales}
-      
+            data={csvData}
             filename="sales_data.csv"
-            className="btn bg-primary text-white px-4 py-2 rounded"
           >
-            Export to CSV
+            <Button>Export to CSV</Button>
           </CSVLink>
           <Button
             onClick={() => setIsAddSalesModalOpen(true)}
