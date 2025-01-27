@@ -21,7 +21,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
     "@shadcn/ui": "^0.0.4",
-    "@tanstack/react-query": "^5.60.5",
+    "@tanstack/react-query": "^4.36.1",
     "@tanstack/react-table": "^8.20.5",
     "@tanstack/react-virtual": "^3.10.9",
     "axios": "^1.7.8",
