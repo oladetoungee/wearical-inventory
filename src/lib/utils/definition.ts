@@ -70,6 +70,7 @@ export interface SalesData {
   product: SalesProduct;
   dateCreated: string;
   createdBy: string;
+  creatorName?: string;
     quantity: number;
   totalCost: number;
   totalSellingPrice: number;
