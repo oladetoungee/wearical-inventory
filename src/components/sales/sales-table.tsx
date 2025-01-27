@@ -33,6 +33,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { CSVLink } from 'react-csv';
 
 export const SalesTable = () => {
   const [isAddSalesModalOpen, setIsAddSalesModalOpen] = useState(false);
@@ -40,7 +41,7 @@ export const SalesTable = () => {
   const [dateFilter, setDateFilter] = useState<[Date | null, Date | null]>([null, null]);
   const [locationFilter, setLocationFilter] = useState<string | null>(null);
 
-  const { sales, loading, error } = useSales();
+  const { sales, loading } = useSales();
 
   // Filtered sales data based on search, location, and date range
   const filteredSales = useMemo(() => {
@@ -79,16 +80,21 @@ export const SalesTable = () => {
     }
   };
 
+  const csvHeaders = columns.map((col) => ({
+    label: col.header,
+    key: col.accessorKey,
+  }));
+
   return (
     <div className="space-y-4">
-  <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 p-4">
         <Input
           placeholder="Search sales..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"
         />
-         <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
+        <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
           <DatePickerWithRange
             value={{
               from: dateFilter[0] || undefined,
@@ -115,12 +121,14 @@ export const SalesTable = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            variant="outline"
-            className="bg-primary text-white"
+          <CSVLink
+            data={filteredSales}
+      
+            filename="sales_data.csv"
+            className="btn bg-primary text-white px-4 py-2 rounded"
           >
-            Export
-          </Button>
+            Export to CSV
+          </CSVLink>
           <Button
             onClick={() => setIsAddSalesModalOpen(true)}
             className="bg-primary text-white"
