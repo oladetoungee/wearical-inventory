@@ -27,6 +27,7 @@ import { AddInventoryModal, AddCategoryModal } from './';
 import { DatePickerWithRange } from '@/components/ui';
 import { DateRange } from 'react-day-picker';
 import { FilterModal } from './';
+import { CSVLink } from 'react-csv';
 import { Skeleton } from "@/components/ui/skeleton"
 
 
@@ -114,7 +115,12 @@ export const InventoryTable = () => {
     setTempLocationFilter('all');
     setTempAvailabilityFilter('all');
   };
-
+const csvData = useMemo(() => {
+    return filteredProducts.map(({ id, ...rest }) => ({
+      ...rest,
+      dateCreated: new Date(rest.dateCreated).toLocaleDateString(),
+    }));
+  }, [filteredProducts]);
   return (
     <div className="space-y-4 ">
 
@@ -125,6 +131,13 @@ export const InventoryTable = () => {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-xs md:max-w-sm lg:max-w-md"
         />
+             <CSVLink
+                    data={csvData}
+                    filename="inventory_data.csv"
+                  >
+                    <Button>Export to CSV</Button>
+                  </CSVLink>
+
         <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
           <DatePickerWithRange
             value={{

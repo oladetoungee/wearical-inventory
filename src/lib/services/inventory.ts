@@ -78,11 +78,7 @@ export const updateInventory = async (data: InventoryData, imageFile: File | nul
       restockQuantity: data.restockQuantity, 
       restockReason: data.restockReason, 
       dateUpdated: new Date().toISOString(),
-      updatedBy: {
-        uid: user?.uid || '',
-        email: user?.email || '',
-        fullName: user?.fullName || '',
-      },
+      updatedBy:  user?.uid || '',
       status: currentInventory.quantity + (data.restockQuantity || 0) > currentInventory.thresholdValue ? 'In Stock' : currentInventory.quantity + (data.restockQuantity || 0) > 0 ? 'Low Stock' : 'Out of Stock',
     };
 
