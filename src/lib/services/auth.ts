@@ -51,6 +51,7 @@ export const signIn = async (email: string, password: string) => {
 export const logOut = async () => {
   await signOut(auth);
   destroyCookie(null, 'token'); 
+  
 };
 
 // Function to update user password
