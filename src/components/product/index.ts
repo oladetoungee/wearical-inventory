@@ -1,1 +1,1 @@
-export * from './product-table';
+export * from '../inventory/inventory-table-mini';

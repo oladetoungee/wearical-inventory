@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LogOut, LayoutPanelLeft, CalendarCheck2, ChartBar, Users, ClipboardList, Settings as SettingsIcon, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { logOut } from '@/lib/services/auth';
@@ -17,7 +17,6 @@ interface NavItem {
 interface SidebarProps {
     isOpen: boolean;
     toggleSidebar: () => void;
-
 }
 
 const navItems: NavItem[] = [
@@ -31,7 +30,13 @@ const navItems: NavItem[] = [
 
 const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     const { userData } = useUser();
-    const currentPath = usePathname(); 
+    const currentPath = usePathname();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        await logOut();
+        router.push('/sign-in'); // Redirect to sign-in page
+    };
 
     return (
         <div className={`fixed border-r inset-0 z-30 transform transition-transform duration-300 bg-white ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static md:w-64`}>
@@ -56,7 +61,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                     </Link>
                 ))}
             </nav>
-
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 md:py-4">
                 <div className="flex items-center">
                     <Avatar>
@@ -65,7 +69,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                     </Avatar>
                     <p className="text-sm font-semibold">{userData?.fullName}</p>
                 </div>
-                <button className="flex items-center text-xs md:text-base" onClick={logOut}>
+                <button className="flex items-center text-xs md:text-base" onClick={handleLogout}>
                     <LogOut className="mr-1" />
                 </button>
             </div>

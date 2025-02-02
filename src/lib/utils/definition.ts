@@ -49,6 +49,7 @@ export interface InventoryData {
   outOfStockEmail: string;
   lowStockEmail: string;
   emailFrequency: string;
+  updatedBy?: string;
   location: "Online" | "Store";
   status: "In Stock" | "Low Stock" | "Out of Stock";
   productImageUrl?: string;

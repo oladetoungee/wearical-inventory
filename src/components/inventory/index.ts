@@ -7,3 +7,4 @@ export * from './view-modal';
 export * from './update-modal';
 export * from './filter-modal';
 export * from './low-inventory-table';
+export * from './inventory-table-mini';
