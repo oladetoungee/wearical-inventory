@@ -115,7 +115,7 @@ export const InventoryTable = () => {
     setTempLocationFilter('all');
     setTempAvailabilityFilter('all');
   };
-const csvData = useMemo(() => {
+  const csvData = useMemo(() => {
     return filteredProducts.map(({ id, ...rest }) => ({
       ...rest,
       dateCreated: new Date(rest.dateCreated).toLocaleDateString(),
@@ -125,18 +125,19 @@ const csvData = useMemo(() => {
     <div className="space-y-4 ">
 
       <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 p-4">
-        <Input
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xs md:max-w-sm lg:max-w-md"
-        />
-             <CSVLink
-                    data={csvData}
-                    filename="inventory_data.csv"
-                  >
-                    <Button>Export to CSV</Button>
-                  </CSVLink>
+      <div className='flex flex-row flex-wrap gap-2'>
+  <Input
+    placeholder="Search products..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="flex-1 max-w-xs md:max-w-sm lg:max-w-md"
+  />
+  <CSVLink data={csvData} filename="inventory_data.csv">
+    <Button>Export to CSV</Button>
+  </CSVLink>
+</div>
+
+
 
         <div className="flex flex-wrap gap-2 items-center justify-end space-x-2">
           <DatePickerWithRange
