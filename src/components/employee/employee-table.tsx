@@ -48,8 +48,8 @@ export const EmployeeTable = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
- 
-  
+
+
   const [selectedEmployee, setSelectedEmployee] = useState<UserData | null>(null);
 
   const [search, setSearch] = useState('');
@@ -158,7 +158,7 @@ export const EmployeeTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
-const csvData = filteredUsers 
+  const csvData = filteredUsers
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 p-4">
@@ -185,12 +185,12 @@ const csvData = filteredUsers
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-             <CSVLink
-                              data={csvData}
-                              filename="employee_data.csv"
-                            >
-                              <Button>Export to CSV</Button>
-                            </CSVLink>
+          <CSVLink
+            data={csvData}
+            filename="employee_data.csv"
+          >
+            <Button>Export to CSV</Button>
+          </CSVLink>
           <Button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-primary text-white"
@@ -227,15 +227,15 @@ const csvData = filteredUsers
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-              {loading ? (
-          <div className="flex justify-center">
-            {[...Array(columns.length)].map((_, index) => (
-              <Skeleton key={index} className="w-32 h-4 mx-2" />
-            ))}
-          </div>
-        ) : (
-          <EmptyState type="employee" />
-        )}
+                {loading ? (
+                  <div className="flex justify-center">
+                    {[...Array(columns.length)].map((_, index) => (
+                      <Skeleton key={index} className="w-32 h-4 mx-2" />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState type="employee" />
+                )}
               </TableCell>
             </TableRow>
           )}
