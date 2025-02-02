@@ -1,6 +1,6 @@
 import { DashboardLayout } from '@/components/layout';
 import { StockChart, WeeklyChart, MonthlySalesChart } from '@/components/analytics';
-import { DashboardHome } from '@/components/dashboard';
+import { DashboardHome } from '@/components/dash-board/dashboard-ctas';
 import { LowStockTable } from '@/components/inventory';
 
 export default function AnalyticsPage() {
